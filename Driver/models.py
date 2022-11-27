@@ -1,9 +1,25 @@
 from django.db import models
-
-from django.db import models
-from django.db.models import Model
+# from django.db.models import Model
 from django.core.validators import RegexValidator
 from datetime import date, datetime
+
+USER = (
+    (1, "Admin"),
+    (2, "Manager"),
+    (3, "Personnel"),
+    (4, "Dispatcher"),
+    (5, "Forwarder"),
+    (6, "Driver"),
+)
+
+STATUS = (
+    (1, "Positive"),
+)
+
+STATUS_PROBLEM = (
+    (1, "Positive"),
+    (2, "Raport problem")
+)
 
 NUMBER = (
     ("PL", "+48"),
@@ -122,6 +138,22 @@ CUSTOMS_CLEARANCE = (
 )
 
 
+class UserModel(models.Model):
+    name = models.CharField(max_length=64, null=False)
+    surname = models.CharField(max_length=128, null=False)
+    phone_regex = RegexValidator(regex=r'^(\+\d{2,3})?\d{9,11}$',
+                                 message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
+    phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, primary_key=True)
+    user_type = models.CharField(max_length=24, choices=USER, blank=False)
+
+    @property
+    def fullname(self):
+        return (f"{self.name} {self.surname}")
+
+    def __str__(self):
+        return (f"{self.fullname} - {self.phone_number} ({self.user_type})")
+
+
 class AddressCompanyFromModel(models.Model):
     company_name = models.CharField(max_length=100, blank=False)
     address_country = models.CharField(max_length=20, choices=COUNTRY, blank=False)
@@ -131,6 +163,10 @@ class AddressCompanyFromModel(models.Model):
     address_property_first = models.PositiveSmallIntegerField(blank=False)
     address_property_second = models.PositiveSmallIntegerField()
     address_more_info = models.TextField()
+
+
+    def __str__(self):
+        return (f"{self.company_name} - {self.address_city} ({self.address_country})")
 
 
 class AddressCompanyToModel(models.Model):
@@ -144,6 +180,11 @@ class AddressCompanyToModel(models.Model):
     address_more_info = models.TextField()
 
 
+    def __str__(self):
+        return (f"{self.company_name} - {self.address_city} ({self.address_country})")
+
+
+
 class DriverModel(models.Model):
     name = models.CharField(max_length=64, blank=False)
     surname = models.CharField(max_length=128, blank=False)
@@ -151,6 +192,13 @@ class DriverModel(models.Model):
     phone_regex = RegexValidator(regex=r'^(\+\d{2,3})\d{9,11}$',
                                  message='Phone number must be entered in the format: "+00 000000000". Up to 14 digits allowed.')
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, primary_key=True)
+
+    @property
+    def fullname(self):
+        return (f"{self.name} {self.surname}")
+
+    def __str__(self):
+        return (f"{self.fullname} - {self.phone_number} ({UserModel.user_type})")
 
 
 class ForwarderModel(models.Model):
@@ -160,6 +208,13 @@ class ForwarderModel(models.Model):
                                  message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, primary_key=True)
 
+    @property
+    def fullname(self):
+        return (f"{self.name} {self.surname}")
+
+    def __str__(self):
+        return (f"{self.fullname} - {self.phone_number} ({UserModel.user_type})")
+
 
 class TrailerModel(models.Model):
     model = models.CharField(max_length=30, choices=TRAILER, blank=False)
@@ -167,6 +222,9 @@ class TrailerModel(models.Model):
     weighs = models.PositiveSmallIntegerField(default=0, blank=False)
     tons_can_load = models.PositiveSmallIntegerField(default=0, blank=False)
     cargo_space = models.CharField(max_length=6, choices=TRAILER_SPACE)
+
+    def __str__(self):
+        return (f"{self.model} - {self.trailer_number} ({self.tons_can_load}/{self.cargo_space})")
 
 
 class CarModel(models.Model):
@@ -176,14 +234,17 @@ class CarModel(models.Model):
     weighs = models.PositiveSmallIntegerField(default=0, blank=False)
     tons_can_load = models.PositiveSmallIntegerField(default=0)
     cargo_space = models.CharField(max_length=5, choices=TRUCK_SPACE)
-    trailer = models.OneToOneField(TrailerModel, on_delete=models.CASCADE)
+    trailer = models.OneToOneField(TrailerModel, on_delete=models.CASCADE, related_name="car_trailer")
+
+    def __str__(self):
+        return (f"{self.model} - {self.trailer_number} ({self.tons_can_load}/{self.cargo_space})")
 
 
 class CargoModel(models.Model):
-    company_address_from = models.ForeignKey(AddressCompanyFromModel, on_delete=models.CASCADE)
+    company_address_from = models.ForeignKey(AddressCompanyFromModel, on_delete=models.CASCADE, related_name="cargo_company_address_from")
     loading_date = models.DateField(auto_now=False, auto_now_add=False, blank=False)
     loading_hour = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
-    company_address_to = models.ForeignKey(AddressCompanyToModel, on_delete=models.CASCADE)
+    company_address_to = models.ForeignKey(AddressCompanyToModel, on_delete=models.CASCADE, related_name="cargo_company_address_to")
     unloading_date = models.DateField(auto_now=False, auto_now_add=False, blank=False)
     unloading_hour = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
     description = models.TextField()
@@ -192,12 +253,40 @@ class CargoModel(models.Model):
     weight = models.PositiveSmallIntegerField(default=0)
     pallets = models.PositiveSmallIntegerField(default=0)
     place_of_pallets = models.PositiveSmallIntegerField(default=0)
-    truck = models.ForeignKey(CarModel, on_delete=models.CASCADE)
-    forwarder = models.ForeignKey(ForwarderModel, on_delete=models.CASCADE)
+    truck = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="cargo_truck")
+    forwarder = models.ForeignKey(ForwarderModel, on_delete=models.CASCADE, related_name="cargo_forwarder")
+    date = models.DateField(auto_now=False, auto_now_add=True, blank=False)
+
+    def __str__(self):
+        return (f"{self.pk} - {self.company_address_from} > {self.company_address_to} ({self.customs}/{self.fix})")
 
 
-class PlanCargoModel(Model):
-    driver = models.ForeignKey(DriverModel, on_delete=models.CASCADE)
-    truck = models.OneToOneField(CarModel, on_delete=models.CASCADE)
-    forwarder = models.ForeignKey(ForwarderModel, on_delete=models.CASCADE)
-    description = models.ForeignKey(CargoModel, on_delete=models.CASCADE)
+class PlanCargoModel(models.Model):
+    driver = models.ForeignKey(DriverModel, on_delete=models.CASCADE, related_name="plan_cargo_driver")
+    truck = models.OneToOneField(CarModel, on_delete=models.CASCADE, related_name="plan_cargo_truck")
+    forwarder = models.ForeignKey(ForwarderModel, on_delete=models.CASCADE, related_name="plan_cargo_forwarder")
+    description = models.ForeignKey(CargoModel, on_delete=models.CASCADE, related_name="plan_cargo_description")
+    date = models.DateField(auto_now=False, auto_now_add=True, blank=False)
+
+
+    def __str__(self):
+        return (f"{self.driver} - {self.truck} ({self.forwarder})")
+
+
+class DriverWorkerModel(models.Model):
+    point = models.ForeignKey(PlanCargoModel, on_delete=models.CASCADE, related_name="driver_worker_point")
+    date = models.DateField(auto_now=False, auto_now_add=True, blank=False)
+    confirm_arrival = models.CharField(max_length=32, choices=STATUS)
+    confirm_unloading = models.CharField(max_length=32, choices=STATUS)
+    confirm_loading = models.CharField(max_length=32, choices=STATUS)
+    raport = models.CharField(max_length=32, choices=STATUS_PROBLEM)
+    message_to = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="driver_worker_message_to")
+    message = models.TextField()
+
+    def __str__(self):
+        return (f"{self.pk} - {self.point}")
+
+
+class MessageModel(models.Model):
+    message_to = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="message_message_to")
+    message = models.TextField()
