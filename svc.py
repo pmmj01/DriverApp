@@ -1,0 +1,1 @@
+SVC = 'django-insecure-z-9w%^3o4r6gb3&^4#27vl__ev50=h==)wdzhrdt3iby5(r^z#'
