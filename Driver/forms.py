@@ -2,9 +2,19 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import ModelForm
 from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, \
     TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
+
+USER = (
+    ('admin', 'Admin'),
+    ('manager', 'Manager'),
+    ('personnel', 'Personnel'),
+    ('dispatcher', 'Dispatcher'),
+    ('forwarder', 'Forwarder'),
+    ('driver', 'Driver'),
+)
 
 
 class UserForm(ModelForm):
@@ -13,20 +23,33 @@ class UserForm(ModelForm):
         fields = '__all__'
 
 
+class UserCreateForm(UserCreationForm):
+    class Meta:
+        model = UserModel
+        fields = '__all__'
+
+
+class UserChangeForm(UserChangeForm):
+    class Meta:
+        model = UserModel
+        fields = '__all__'
+
+
 def login_validator(value):
     if User.objects.filter(username=value).exists():
-        raise ValidationError('This login already exists!')
+        raise ValidationError('This number already exists!')
 
 
 class AddUserForm(forms.Form):
-    login = 'phone_number'
-    phone_regex = RegexValidator(regex=r'^(\+\d{2,3})?\d{9,11}$',
+    username = None
+    phone_regex = RegexValidator(regex=r'^(\+)(\d{2,3})(\d{9,11})$',
                                  message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
-    phone_number = forms.CharField(validators=[phone_regex], max_length=15, blank=False, primary_key=True)
+    phone_number = forms.CharField(label='Phone nubmer', validators=[phone_regex, login_validator], max_length=15)
     password = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput)
     password_repeat = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput)
-    name = forms.CharField(label='Name', max_length=64)
-    surname = forms.CharField(label='Surname', max_length=64)
+    first_name = forms.CharField(label='First name', max_length=64)
+    last_name = forms.CharField(label='Last name', max_length=64)
+    user_type = forms.ChoiceField(label='Type', choices=USER)
 
     def clean_login(self):
         if User.objects.filter(username=self.cleaned_data.get('login')).exists():

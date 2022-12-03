@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
+# from .forms import UserChangeForm, UserCreateForm
+
 
 # admin.site.register(AddressCompanyFromModel)
 # admin.site.register(AddressCompanyToModel)
@@ -12,9 +15,33 @@ from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, D
 # admin.site.register(DriverWorkerModel)
 # admin.site.register(MessageModel)
 
+
+# class CustomUserAdmin(UserAdmin):
+#     add_form = UserCreateForm
+#     form = UserChangeForm
+#     model = UserModel
+#     list_display = ('phone_number', 'is_staff', 'is_active',)
+#     list_filter = ('phone_number', 'is_staff', 'is_active',)
+#     fieldsets = (
+#         (None, {'fields': ('phone_number', 'password')}),
+#         ('Permissions', {'fields': ('is_staff', 'is_active')}),
+#     )
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': ('phone_number', 'password1', 'password2', 'is_staff', 'is_active')}
+#         ),
+#     )
+#     search_fields = ('phone_number',)
+#     ordering = ('phone_number',)
+#
+#
+# admin.site.register(UserModel, CustomUserAdmin)
+#
+
 @admin.register(UserModel)
 class UserAdmin(admin.ModelAdmin):
-    search_fields = ["user_type", "phone_number", "name", "surname"]
+    search_fields = ["user_type", "phone_number", "first_name", "last_name"]
     list_filter = ["user_type"]
 
 
@@ -32,14 +59,14 @@ class AddressCompanyToAdmin(admin.ModelAdmin):
 
 @admin.register(DriverModel)
 class DriverAdmin(admin.ModelAdmin):
-    search_fields = ["phone_number", "name", "surname"]
-    list_filter = ["name", "surname", "driver_license"]
+    search_fields = ["phone_number", "first_name", "last_name"]
+    list_filter = ["first_name", "last_name", "driver_license"]
 
 
 @admin.register(ForwarderModel)
 class ForwarderAdmin(admin.ModelAdmin):
-    search_fields = ["phone_number", "name", "surname"]
-    list_filter = ["name", "surname"]
+    search_fields = ["phone_number", "first_name", "last_name"]
+    list_filter = ["first_name", "last_name"]
 
 
 @admin.register(TrailerModel)

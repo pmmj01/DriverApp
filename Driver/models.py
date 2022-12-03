@@ -1,15 +1,20 @@
 from django.db import models
 # from django.db.models import Model
 from django.core.validators import RegexValidator
+from django.contrib.auth.models import PermissionsMixin, Permission, AbstractUser, AbstractBaseUser
+from django.contrib.auth import authenticate
 from datetime import date, datetime
+from django.utils import timezone
+# from .managers import CustomUserManager
+
 
 USER = (
-    (1, "Admin"),
-    (2, "Manager"),
-    (3, "Personnel"),
-    (4, "Dispatcher"),
-    (5, "Forwarder"),
-    (6, "Driver"),
+    ('admin', 'Admin'),
+    ('manager', 'Manager'),
+    ('personnel', 'Personnel'),
+    ('dispatcher', 'Dispatcher'),
+    ('forwarder', 'Forwarder'),
+    ('driver', 'Driver'),
 )
 
 STATUS = (
@@ -139,16 +144,21 @@ CUSTOMS_CLEARANCE = (
 
 
 class UserModel(models.Model):
-    name = models.CharField(max_length=64, null=False)
-    surname = models.CharField(max_length=128, null=False)
-    phone_regex = RegexValidator(regex=r'^(\+\d{2,3})?\d{9,11}$',
+    # username = None
+    phone_regex = RegexValidator(regex=r'^(\+)(\d{2,3})(\d{9,11})$',
                                  message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
-    phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, primary_key=True)
-    user_type = models.CharField(max_length=24, choices=USER, blank=False)
+    phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, unique=True, primary_key=True)
+    user_type = models.CharField(max_length=20, choices=USER, blank=False)
+    first_name = models.CharField(max_length=64)
+    last_name = models.CharField(max_length=64)
+    # is_anonymous = False
+    # is_authenticated = True
+    # USERNAME_FIELD = "phone_number"
+    # REQUIRED_FIELDS = ['user_type']
 
     @property
     def fullname(self):
-        return (f"{self.name} {self.surname}")
+        return (f"{self.first_name} {self.last_name}")
 
     def __str__(self):
         return (f"{self.fullname} - {self.phone_number} ({self.user_type})")
@@ -156,12 +166,12 @@ class UserModel(models.Model):
 
 class AddressCompanyFromModel(models.Model):
     company_name = models.CharField(max_length=100, blank=False)
-    address_country = models.CharField(max_length=20, choices=COUNTRY, blank=False)
+    address_country = models.PositiveSmallIntegerField(choices=COUNTRY, blank=False)
     address_city = models.CharField(max_length=64, blank=False)
     address_zip_code = models.CharField(max_length=5, blank=False)
     address_street = models.CharField(max_length=128, blank=False)
-    address_property_first = models.PositiveSmallIntegerField(blank=False)
-    address_property_second = models.PositiveSmallIntegerField()
+    address_property_first = models.CharField(max_length=8, blank=False)
+    address_property_second = models.CharField(max_length=8)
     address_more_info = models.TextField()
 
 
@@ -171,12 +181,12 @@ class AddressCompanyFromModel(models.Model):
 
 class AddressCompanyToModel(models.Model):
     company_name = models.CharField(max_length=100, blank=False)
-    address_country = models.CharField(max_length=20, choices=COUNTRY, blank=False)
+    address_country = models.PositiveSmallIntegerField(choices=COUNTRY, blank=False)
     address_city = models.CharField(max_length=64, blank=False)
     address_zip_code = models.CharField(max_length=5, blank=False)
     address_street = models.CharField(max_length=128, blank=False)
-    address_property_first = models.PositiveSmallIntegerField(blank=False)
-    address_property_second = models.PositiveSmallIntegerField()
+    address_property_first = models.CharField(max_length=8, blank=False)
+    address_property_second = models.CharField(max_length=8)
     address_more_info = models.TextField()
 
 
@@ -186,31 +196,31 @@ class AddressCompanyToModel(models.Model):
 
 
 class DriverModel(models.Model):
-    name = models.CharField(max_length=64, blank=False)
-    surname = models.CharField(max_length=128, blank=False)
+    first_name = models.CharField(max_length=64, blank=False)
+    last_name = models.CharField(max_length=128, blank=False)
     driver_license = models.PositiveSmallIntegerField(choices=DRIVER_LICENSE, blank=False)
-    phone_regex = RegexValidator(regex=r'^(\+\d{2,3})\d{9,11}$',
+    phone_regex = RegexValidator(regex=r'^(\+)(\d{2,3})(\d{9,11})$',
                                  message='Phone number must be entered in the format: "+00 000000000". Up to 14 digits allowed.')
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, primary_key=True)
 
     @property
     def fullname(self):
-        return (f"{self.name} {self.surname}")
+        return (f"{self.first_name} {self.last_name}")
 
     def __str__(self):
         return (f"{self.fullname} - {self.phone_number} ({UserModel.user_type})")
 
 
 class ForwarderModel(models.Model):
-    name = models.CharField(max_length=64, null=False)
-    surname = models.CharField(max_length=128, null=False)
-    phone_regex = RegexValidator(regex=r'^(\+\d{2,3})?\d{9,11}$',
+    first_name = models.CharField(max_length=64, null=False)
+    last_name = models.CharField(max_length=128, null=False)
+    phone_regex = RegexValidator(regex=r'^(\+)(\d{2,3})(\d{9,11})$',
                                  message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, primary_key=True)
 
     @property
     def fullname(self):
-        return (f"{self.name} {self.surname}")
+        return (f"{self.first_name} {self.last_name}")
 
     def __str__(self):
         return (f"{self.fullname} - {self.phone_number} ({UserModel.user_type})")
