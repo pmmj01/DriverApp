@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %} Address To {% endblock %}
+{% block content %}
+    {{ all_address_to }}
+    {% for companyTo in all_address_to %}
+        <ul>
+            <tr><b>Company name: </b></tr>
+                <li><p>{{ companyTo.company_name }}<p></li>
+            <tr><b>Country: </b></tr>
+                <li><p>{{ companyTo.address_country }}</p></li>
+            <tr><b>City: </b></tr>
+                <li><p>{{ companyTo.address_city }}</p></li>
+            <tr><b>Zip code: </b></tr>
+                <li><p>{{ companyTo.address_zip_code }}</p></li>
+            <tr><b>Street: </b></tr>
+                <li><p>{{ companyTo.address_street }}<p></li>
+            <tr><b>Property first: </b></tr>
+                <li><p>{{ companyTo.address_property_first }}</p></li>
+            <tr><b>Property second: </b></tr>
+                <li><p>{{ companyTo.address_property_second }}</p></li>
+            <tr><b>More info: </b></tr>
+                <li><p>{{ companyTo.address_more_info }}</p></li>
+        </ul>
+    {% endfor %}
+{% endblock %}

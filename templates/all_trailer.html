@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} Trailer {% endblock %}
+{% block content %}
+    {{ all_trailer }}
+    {% for trailer in all_trailer %}
+        <ul>
+            <tr><b>Model: </b></tr>
+                <li><p>{{ trailer.model }}<p></li>
+            <tr><b>Number: </b></tr>
+                <li><p>{{ trailer.trailer_number }}</p></li>
+            <tr><b>Weighs: </b></tr>
+                <li><p>{{ trailer.weighs }}</p></li>
+            <tr><b>Can load: </b></tr>
+                <li><p>{{ trailer.tons_can_load }}</p></li>
+            <tr><b>Cargo space: </b></tr>
+                <li><p>{{ trailer.cargo_space }}<p></li>
+        </ul>
+    {% endfor %}
+{% endblock %}

@@ -68,7 +68,6 @@ TEMPLATES = [
     },
 ]
 
-STATIC_ROOT = '/static'
 WSGI_APPLICATION = 'DriverApp.wsgi.application'
 
 # Database
@@ -77,7 +76,7 @@ WSGI_APPLICATION = 'DriverApp.wsgi.application'
 DATABASES = {
     'default': {
         'HOST': '127.0.0.1',
-        'NAME': 'app_transport',
+        'NAME': 'driver_app',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'postgres',
         'PASSWORD': '',
@@ -117,6 +116,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = '/static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -126,7 +126,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = 'Driver_media'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'all_user'
+LOGOUT_REDIRECT_URL = 'all_user'
 
-# AUTH_USER_MODEL = 'Driver.UserModel'
+AUTH_USER_MODEL = "Driver.UserModel"

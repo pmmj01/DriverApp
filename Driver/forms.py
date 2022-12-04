@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import ModelForm
 from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, \
     TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
@@ -23,26 +22,13 @@ class UserForm(ModelForm):
         fields = '__all__'
 
 
-class UserCreateForm(UserCreationForm):
-    class Meta:
-        model = UserModel
-        fields = '__all__'
-
-
-class UserChangeForm(UserChangeForm):
-    class Meta:
-        model = UserModel
-        fields = '__all__'
-
-
 def login_validator(value):
-    if User.objects.filter(username=value).exists():
+    if UserModel.objects.filter(phone_number=value).exists():
         raise ValidationError('This number already exists!')
 
 
 class AddUserForm(forms.Form):
-    username = None
-    phone_regex = RegexValidator(regex=r'^(\+)(\d{2,3})(\d{9,11})$',
+    phone_regex = RegexValidator(regex=r'^(?P<plus>\+)(?P<code>\d{2,3})(?P<number>\d{9,11})$',
                                  message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
     phone_number = forms.CharField(label='Phone nubmer', validators=[phone_regex, login_validator], max_length=15)
     password = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput)
@@ -60,6 +46,16 @@ class AddUserForm(forms.Form):
         if self.cleaned_data.get('password') != self.cleaned_data.get('password_repeat'):
             raise ValidationError('The entered passwords are different!')
         return self.cleaned_data.get('password_repeat')
+
+
+class ResetPasswordForm(forms.Form):
+    new_password = forms.CharField(label='New password', max_length=100, widget=forms.PasswordInput)
+    new_password_repeat = forms.CharField(label='Repeat new password', max_length=100, widget=forms.PasswordInput)
+
+    def clean_new_password_repeat(self):
+        if self.cleaned_data.get('new_password') != self.cleaned_data.get('new_password_repeat'):
+            raise ValidationError('The entered passwords are different!')
+        return self.cleaned_data.get('new_password_repeat')
 
 
 class AddressCompanyFromForm(ModelForm):

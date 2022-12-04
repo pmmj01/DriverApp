@@ -4,10 +4,12 @@ from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, D
     TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
 from Driver.forms import *
 from django.views import View
+from django.contrib.auth.decorators import login_required
+
 
 class UserView(View):
     def get(self, request):
-        all_user = UserModel.objects.all()
+        users = User.objects.exclude(is_superuser=True)
         return render(request, 'all_user.html', locals())
 
 
@@ -41,6 +43,12 @@ class AddressCompanyFromAddView(LoginRequiredMixin, View):
         return render(request, "add.html", locals())
 
 
+class AddressCompanyFromAllView(View):
+    def get(self, request):
+        all_address_from = AddressCompanyFromModel.objects.all()
+        return render(request, 'all_address_from.html', locals())
+
+
 class AddressCompanyToAddView(LoginRequiredMixin, View):
     def get(self, request):
         form = AddressCompanyToForm()
@@ -71,31 +79,43 @@ class AddressCompanyToAddView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
-class TrailerView(LoginRequiredMixin, View):
-     def get(self, request):
-         form = TrailerForm()
-         return render(request, 'add.html', locals())
-
-     def post(self, request):
-         form = TrailerForm(request.POST)
-         if form.is_valid():
-             model = form.cleaned_data.get('model')
-             trailer_number = form.cleaned_data.get('trailer_number')
-             weighs = form.cleaned_data.get('weighs')
-             tons_cal_load = form.cleaned_data.get('tons_can_load')
-             cargo_space = form.cleaned_data.get('cargo_space')
-             trailer = TrailerModel()
-             trailer.model = model
-             trailer.trailer_number = trailer_number
-             trailer.weighs = weighs
-             trailer.tons_can_load = tons_cal_load
-             trailer.cargo_space = cargo_space
-             trailer.save()
-             return redirect('trailer', trailer_id=trailer.id)
-         return render(request, 'add.html', locals())
+class AddressCompanyToAllView(View):
+    def get(self, request):
+        all_address_to = AddressCompanyToModel.objects.all()
+        return render(request, 'all_address_to.html', locals())
 
 
-class CarView(LoginRequiredMixin, View):
+class TrailerAddView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = TrailerForm()
+        return render(request, 'add.html', locals())
+
+    def post(self, request):
+        form = TrailerForm(request.POST)
+        if form.is_valid():
+            model = form.cleaned_data.get('model')
+            trailer_number = form.cleaned_data.get('trailer_number')
+            weighs = form.cleaned_data.get('weighs')
+            tons_cal_load = form.cleaned_data.get('tons_can_load')
+            cargo_space = form.cleaned_data.get('cargo_space')
+            trailer = TrailerModel()
+            trailer.model = model
+            trailer.trailer_number = trailer_number
+            trailer.weighs = weighs
+            trailer.tons_can_load = tons_cal_load
+            trailer.cargo_space = cargo_space
+            trailer.save()
+            return redirect('trailer', trailer_id=trailer.id)
+        return render(request, 'add.html', locals())
+
+
+class TrailerAllView(View):
+    def get(self, request):
+        all_trailer = UserModel.objects.all()
+        return render(request, 'all_trailer.html', locals())
+
+
+class CarAddView(LoginRequiredMixin, View):
     def get(self, request):
         form = CarForm()
         return render(request, 'add.html', locals())
@@ -113,7 +133,7 @@ class CarView(LoginRequiredMixin, View):
             car = CarModel()
             car.model = model
             car.have_to = have_to
-            car.trailer_number = car_number
+            car.car_number = car_number
             car.weighs = weighs
             car.tons_can_load = tons_cal_load
             car.cargo_space = cargo_space
@@ -123,7 +143,13 @@ class CarView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
-class CargoView(LoginRequiredMixin, View):
+class CarAllView(View):
+    def get(self, request):
+        all_car = CarModel.objects.all()
+        return render(request, 'all_car.html', locals())
+
+
+class CargoAddView(LoginRequiredMixin, View):
     def get(self, request):
         form = CargoForm()
         return render(request, 'add.html', locals())
@@ -167,7 +193,13 @@ class CargoView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
-class PlanCargoView(LoginRequiredMixin, View):
+class CargoAllView(View):
+    def get(self, request):
+        all_Cargo = CargoModel.objects.all()
+        return render(request, 'all_cargo.html', locals())
+
+
+class PlanCargoAddView(LoginRequiredMixin, View):
     def get(self, request):
         form = PlanCargoForm()
         return render(request, 'add.html', locals())
@@ -191,7 +223,13 @@ class PlanCargoView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
-class DriverWorkerView(LoginRequiredMixin, View):
+class PlanCargoAllView(View):
+    def get(self, request):
+        all_user = UserModel.objects.all()
+        return render(request, 'all_user.html', locals())
+
+
+class DriverWorkerAddView(LoginRequiredMixin, View):
     def get(self, request):
         form = DriverWorkerForm()
         return render(request, 'add.html', locals())
@@ -221,6 +259,10 @@ class DriverWorkerView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
+class DriverWorkerUserView(View):
+    def get(self, request):
+        all_user = UserModel.objects.all()
+        return render(request, 'all_user.html', locals())
 
 
 class AddUserView(View):
@@ -239,7 +281,29 @@ class AddUserView(View):
                 password=form.cleaned_data.get('password'),
                 first_name=form.cleaned_data.get('first_name'),
                 last_name=form.cleaned_data.get('last_name'),
+                type_user=form.cleaned_data.get('type_user')
             )
+            return redirect('/login')
+        return render(request, self.template_name, {
+            'form': form
+        })
+
+
+class ResetPasswordView(PermissionRequiredMixin, View):
+    template_name = 'add.html'
+    permission_required = 'auth.change_user'
+
+    def get(self, request):
+        return render(request, self.template_name, {
+            'form': ResetPasswordForm()
+        })
+
+    def post(self, request, pk):
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            user = User.objects.get(id=pk)
+            user.set_password(form.cleaned_data.get('new_password'))
+            user.save()
             return redirect('/login')
         return render(request, self.template_name, {
             'form': form

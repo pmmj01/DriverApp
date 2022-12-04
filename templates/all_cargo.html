@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %} Cargo {% endblock %}
+{% block content %}
+    {{ all_Cargo }}
+    {% for cargo in all_Cargo %}
+        <ul>
+            <tr><b>Address From: </b></tr>
+                <li><p>{{ cargo.company_address_from }}<p></li>
+            <tr><b>Day of loading: </b></tr>
+                <li><p>{{ cargo.loading_date }}<p></li>
+            <tr><b>Hour of loading From: </b></tr>
+                <li><p>{{ cargo.loading_hour }}<p></li>
+            <tr><b>Address To: </b></tr>
+                <li><p>{{ cargo.company_address_to }}<p></li>
+            <tr><b>Day of unloading: </b></tr>
+                <li><p>{{ cargo.unloading_date }}<p></li>
+            <tr><b>Hour of unloading: </b></tr>
+                <li><p>{{ cargo.unloading_hour }}<p></li>
+            <tr><b>More info: </b></tr>
+                <li><p>{{ cargo.description }}<p></li>
+            <tr><b>Fix: </b></tr>
+                <li><p>{{ cargo.fix }}<p></li>
+            <tr><b>Customs: </b></tr>
+                <li><p>{{ cargo.customs }}<p></li>
+            <tr><b>Weight: </b></tr>
+                <li><p>{{ cargo.weight }}<p></li>
+            <tr><b>Pallets: </b></tr>
+                <li><p>{{ cargo.pallets }}<p></li>
+            <tr><b>Place of pallets: </b></tr>
+                <li><p>{{ cargo.place_of_pallets }}<p></li>
+            <tr><b>Truck: </b></tr>
+                <li><p>{{ cargo.truck }}<p></li>
+            <tr><b>Forwarder: </b></tr>
+                <li><p>{{ cargo.forwarder }}<p></li>
+            <tr><b>Date: </b></tr>
+                <li><p>{{ cargo.date }}<p></li>
+        </ul>
+    {% endfor %}
+{% endblock %}
