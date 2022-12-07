@@ -16,7 +16,7 @@
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
 {% if user.is_authenticated %}
-    Hello {{ user.username.title }}
+    Hello {{ user_name.title }}
     <a href="{% url 'logout' %}">Logout</a>
 {% else %}
     <a href="{% url 'login' %}">Login</a>
@@ -32,7 +32,6 @@
     <p>{{ message }}</p>
 {% endfor %}
 {{ request.user }}
-{{ request.user.is_authenticated }}
 
 
 <footer>

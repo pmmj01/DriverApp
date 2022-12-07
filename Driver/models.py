@@ -1,10 +1,10 @@
 from django.db import models
 # from django.db.models import Model
 from django.core.validators import RegexValidator
-from django.contrib.auth.models import PermissionsMixin, Permission, AbstractUser, AbstractBaseUser, User
-from django.contrib.auth import authenticate
-from datetime import date, datetime
-from django.utils import timezone
+from django.contrib.auth.models import PermissionsMixin, Permission, AbstractUser, AbstractBaseUser, User, \
+    BaseUserManager
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # from .managers import CustomUserManager
 
@@ -144,24 +144,58 @@ CUSTOMS_CLEARANCE = (
 )
 
 
+class CustomUserManager(BaseUserManager):
+    def _create_user(self, phone_number, user_type, first_name, last_name, password=None, **extra_fields):
+        if not phone_number:
+            raise ValueError('The given phone number must be set')
+        if not user_type:
+            raise ValueError('The given user type must be set')
+        if not first_name:
+            raise ValueError('The given first name must be set')
+        if not last_name:
+            raise ValueError('The given last name must be set')
+        user = self.model(phone_number=phone_number, user_type=user_type, first_name=first_name, last_name=last_name,
+                          **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, phone_number, user_type, first_name, last_name, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(phone_number, user_type, first_name, last_name, password, **extra_fields)
+
+    def create_superuser(self, phone_number, user_type, first_name, last_name, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(phone_number, user_type, first_name, last_name, password, **extra_fields)
+
+
 class UserModel(AbstractUser):
-    USERNAME_FIELD = "phone_number"
+    username = None
     phone_regex = RegexValidator(regex=r'^(\+)(\d{2,3})(\d{9,11})$',
                                  message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
-    phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, unique=True, primary_key=True)
-    user_type = models.CharField(max_length=20, choices=USER, blank=False)
-    first_name = models.CharField(max_length=64)
-    last_name = models.CharField(max_length=64)
-    # is_anonymous = False
-    # is_authenticated = True
-    REQUIRED_FIELDS = ['user_type']
+    phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=False, unique=True)
+    first_name = models.CharField(max_length=64, blank=False)
+    last_name = models.CharField(max_length=64, blank=False)
+    user_type = models.CharField(max_length=20, choices=USER)
 
-    @property
-    def fullname(self):
-        return (f"{self.first_name} {self.last_name}")
+    USERNAME_FIELD = 'phone_number'
+    REQUIRED_FIELDS = ['user_type', 'first_name', 'last_name']
+
+    objects = CustomUserManager()
 
     def __str__(self):
-        return (f"{self.fullname} - {self.phone_number} ({self.user_type})")
+        return f'{self.full_name()} : {self.phone_number} ({self.user_type.title()})'
+
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
 
 
 class AddressCompanyFromModel(models.Model):
@@ -196,9 +230,25 @@ class DriverModel(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     driver_license = models.PositiveSmallIntegerField(choices=DRIVER_LICENSE, blank=False)
 
+    @property
+    def fullname(self):
+        return (f"{self.user.first_name} {self.user.last_name}")
+
+    def __str__(self):
+        return (
+            f"{self.user.phone_number(0)} {self.user.phone_number(1)} {self.user.phone_number(2)} - {self.fullname} ({self.user.user_type})")
+
 
 class ForwarderModel(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+
+    @property
+    def fullname(self):
+        return (f"{self.user.first_name} {self.user.last_name}")
+
+    def __str__(self):
+        return (
+            f"{self.user.phone_number(0)} {self.user.phone_number(1)} {self.user.phone_number(2)} - {self.fullname} ({self.user.user_type})")
 
 
 class TrailerModel(models.Model):

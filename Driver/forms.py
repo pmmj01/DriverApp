@@ -1,44 +1,19 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
 from django.forms import ModelForm
 from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, \
     TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
 
-USER = (
-    ('admin', 'Admin'),
-    ('manager', 'Manager'),
-    ('personnel', 'Personnel'),
-    ('dispatcher', 'Dispatcher'),
-    ('forwarder', 'Forwarder'),
-    ('driver', 'Driver'),
-)
 
-
-class UserForm(ModelForm):
+class AddUserForm(UserCreationForm):
     class Meta:
-        model = UserModel
-        fields = '__all__'
-
-
-def login_validator(value):
-    if UserModel.objects.filter(phone_number=value).exists():
-        raise ValidationError('This number already exists!')
-
-
-class AddUserForm(forms.Form):
-    phone_regex = RegexValidator(regex=r'^(?P<plus>\+)(?P<code>\d{2,3})(?P<number>\d{9,11})$',
-                                 message='Phone number must be entered in the format: "+00000000000". Up to 14 digits allowed.')
-    phone_number = forms.CharField(label='Phone nubmer', validators=[phone_regex, login_validator], max_length=15)
-    password = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput)
-    password_repeat = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput)
-    first_name = forms.CharField(label='First name', max_length=64)
-    last_name = forms.CharField(label='Last name', max_length=64)
-    user_type = forms.ChoiceField(label='Type', choices=USER)
+        model = get_user_model()
+        fields = ['phone_number', 'user_type', 'first_name', 'last_name']
 
     def clean_login(self):
-        if User.objects.filter(username=self.cleaned_data.get('login')).exists():
+        if UserModel.objects.filter(phone_number=self.cleaned_data.get('login')).exists():
             raise ValidationError('This login already exists!')
         return self.cleaned_data.get('login')
 

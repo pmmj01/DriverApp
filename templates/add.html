@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{{ student }}
 <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}<br/>
-    <input type="submit" value="Zastosuj"/>
+    <input type="submit" value="Submit"/>
 </form>
 {% endblock %}

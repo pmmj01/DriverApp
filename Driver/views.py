@@ -4,12 +4,13 @@ from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, D
     TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
 from Driver.forms import *
 from django.views import View
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 
 class UserView(View):
     def get(self, request):
-        users = User.objects.exclude(is_superuser=True)
+        users = UserModel.objects.exclude(is_superuser=True)
         return render(request, 'all_user.html', locals())
 
 
@@ -267,26 +268,16 @@ class DriverWorkerUserView(View):
 
 class AddUserView(View):
     template_name = 'add.html'
-
     def get(self, request):
-        return render(request, self.template_name, {
-            'form': AddUserForm()
-        })
+        form = AddUserForm()
+        return render(request, self.template_name, {'form': form})
 
     def post(self, request):
         form = AddUserForm(request.POST)
         if form.is_valid():
-            User.objects.create_user(
-                username=form.cleaned_data.get('phone_number'),
-                password=form.cleaned_data.get('password'),
-                first_name=form.cleaned_data.get('first_name'),
-                last_name=form.cleaned_data.get('last_name'),
-                type_user=form.cleaned_data.get('type_user')
-            )
-            return redirect('/login')
-        return render(request, self.template_name, {
-            'form': form
-        })
+            form.save()
+            return redirect('add_user')
+        return render(request, self.template_name, {'form': form})
 
 
 class ResetPasswordView(PermissionRequiredMixin, View):
@@ -301,7 +292,7 @@ class ResetPasswordView(PermissionRequiredMixin, View):
     def post(self, request, pk):
         form = ResetPasswordForm(request.POST)
         if form.is_valid():
-            user = User.objects.get(id=pk)
+            user = UserModel.objects.get(id=pk)
             user.set_password(form.cleaned_data.get('new_password'))
             user.save()
             return redirect('/login')
