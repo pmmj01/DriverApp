@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+{% block content %}
+    <div class="card text-center" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ name }}</h5>
+            <h3>{{ message }}</h3>
+            <h4>This will remove the object from the database. Do you want to delete?</h4>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

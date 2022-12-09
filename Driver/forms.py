@@ -70,7 +70,7 @@ class ForwarderForm(ModelForm):
 class TrailerForm(ModelForm):
     class Meta:
         model = TrailerModel
-        fields = '__all__'
+        fields = ['model', 'trailer_number', 'weighs', 'tons_can_load', 'cargo_space']
         help_texts = {
             'weighs': _('Weight in kilograms'),
             'tons_can_load': _('Weight in kilograms'),

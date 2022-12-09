@@ -1,17 +1,38 @@
 {% extends 'base.html' %}
-{% block title %}{{ name }}{% endblock %}
 {% block content %}
-<ul class="ul_name">
-<div>
-    <h5>{{ message }}</h5>
-</div>
-    <li><b>Company name:</b> {{ company.company_name }}</li>
-    <li><b>Country:</b> {{ company.address_country }}</li>
-    <li><b>City:</b> {{ company.address_city }}</li>
-    <li><b>Zip code:</b> {{ company.address_zip_code }}</li>
-    <li><b>Street:</b> {{ company.address_street }}</li>
-    <li><b>First line:</b> {{ company.address_property_first }}</li>
-    <li><b>Second line:</b> {{ company.address_property_second }}</li>
-    <li><b>More info:</b> {{ company.address_more_info }}</li>
-</ul>
+    <div class="card text-center" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ name }}</h5>
+            <h3>{{ message }}</h3>
+            <ul class="ul_name">
+                <div>
+                    <h5>{{ message }}</h5>
+                </div>
+                {% if cod == "from" %}
+                    <div id="from">
+                        <a href="/driver/all/address_company_from/" class="btn btn-primary">All</a>
+                        <a href="/driver/add/address_company_from/" class="btn btn-primary">Add</a>
+                        <a href="/driver/delete/address_company_from/{{ company.pk }}/"
+                           class="btn btn-primary">Delete</a>
+                        <a href="/driver/edit/address_company_from/{{ company.pk }}/" class="btn btn-primary">Edit</a>
+                    </div>
+                {% elif cod == 'to' %}
+                    <div id="to">
+                        <a href="/driver/all/address_company_to/" class="btn btn-primary">All</a>
+                        <a href="/driver/add/address_company_to/" class="btn btn-primary">Add</a>
+                        <a href="/driver/delete/address_company_to/{{ company.pk }}/" class="btn btn-primary">Delete</a>
+                        <a href="/driver/edit/address_company_to/{{ company.pk }}/" class="btn btn-primary">Edit</a>
+                    </div>
+                {% endif %}
+                <li><b>Company name:</b> {{ company.company_name }}</li>
+                <li><b>Country:</b> {{ company.address_country }}</li>
+                <li><b>City:</b> {{ company.address_city }}</li>
+                <li><b>Zip code:</b> {{ company.address_zip_code }}</li>
+                <li><b>Street:</b> {{ company.address_street }}</li>
+                <li><b>First line:</b> {{ company.address_property_first }}</li>
+                <li><b>Second line:</b> {{ company.address_property_second }}</li>
+                <li><b>More info:</b> {{ company.address_more_info }}</li>
+            </ul>
+        </div>
+    </div>
 {% endblock %}

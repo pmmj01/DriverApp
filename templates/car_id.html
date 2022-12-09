@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
-{% block title %}Car{% endblock %}
 {% block content %}
-<ul class="ul_name">
-<div>
-    <h5>{{ message }}</h5>
-</div>
-    <li><b>Trailer Number:</b> {{ car.car_number }}</li>
-    <li><b>Model:</b> {{ car.model }}</li>
-    <li><b>Driver license:</b> {{ car.have_to }}</li>
-    <li><b>Weighs:</b> {{ car.weighs }} kilograms</li>
-    <li><b>Tons can load:</b> {{ car.tons_can_load }} kilograms</li>
-    <li><b>Cargo space:</b> {{ car.cargo_space }}</li>
-    <li><b>Trailer:</b><a href="/driver/trailer/{{ car.trailer.pk }}/"> {{ car.trailer }}</a></li>
-</ul>
+    <ul class="ul_name">
+        <div>
+            <h5>{{ message }}</h5>
+        </div>
+        <div>
+            <a href="/driver/add/car/" class="btn btn-primary">Add</a>
+        </div>
+        <li><b>Trailer Number:</b> {{ car.car_number }}</li>
+        <li><b>Model:</b> {{ car.model }}</li>
+        <li><b>Driver license:</b> {{ car.have_to }}</li>
+        <li><b>Weighs:</b> {{ car.weighs }} kilograms</li>
+        <li><b>Tons can load:</b> {{ car.tons_can_load }} kilograms</li>
+        <li><b>Cargo space:</b> {{ car.cargo_space }}</li>
+        <li><b>Trailer:</b><a href="/driver/trailer/{{ car.trailer.pk }}/"> {{ car.trailer }}</a></li>
+    </ul>
 {% endblock %}

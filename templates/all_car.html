@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% block title %} {{ name }} {% endblock %}
 {% block content %}
     <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -12,19 +11,23 @@
             <th scope="col">Can load</th>
             <th scope="col">Cargo space</th>
             <th scope="col">Trailer</th>
+            <th scope="col"><a href="/driver/add/car/" class="btn btn-primary">Add</a></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        {% for car in all_car %}
+        {% for truck in car %}
             <tr class="table-activ">
-                <th scope="row">{{ trailer.pk }}</th>
-                <td>{{ car.model }}</td>
-                <td>{{ car.have_to }}</td>
-                <td><a href="/driver/car/{{ car.pk }}/">{{ car.car_number }}</a></td>
-                <td>{{ car.weighs }} (kilograms)</td>
-                <td>{{ car.tons_can_load }} (kilograms)</td>
-                <td>{{ car.cargo_space }}</td>
-                <td><a href="/driver/trailer/{{ trailer.pk }}/">{{ car.trailer }}</a></td>
+                <th scope="row">{{ truck.pk }}</th>
+                <td>{{ truck.model }}</td>
+                <td>{{ truck.have_to }}</td>
+                <td><a href="/driver/car/{{ truck.pk }}/">{{ truck.car_number }}</a></td>
+                <td>{{ truck.weighs }} (kilograms)</td>
+                <td>{{ truck.tons_can_load }} (kilograms)</td>
+                <td>{{ truck.cargo_space }}</td>
+                <td><a href="/driver/trailer/{{ trailer.pk }}/">{{ truck.trailer }}</a></td>
+                <td><a href="/driver/edit/car/{{ truck.pk }}/" class="btn btn-primary">Edit</a></td>
+                <td><a href="/driver/delete/car/{{ truck.pk }}/" class="btn btn-warning">Delete</a></td>
             </tr>
         {% endfor %}
         </tbody>

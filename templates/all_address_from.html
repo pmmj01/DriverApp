@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% block title %} {{ name }} {% endblock %}
 {% block content %}
     <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -13,6 +12,8 @@
             <th scope="col">First line</th>
             <th scope="col">Second line</th>
             <th scope="col">More info</th>
+            <th scope="col"><a href="/driver/add/address_company_from/" class="btn btn-primary">Add</a></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -27,6 +28,8 @@
                 <td>{{ address.address_property_first }}</td>
                 <td>{{ address.address_property_second }}</td>
                 <td>{{ address.address_more_info }}</td>
+                <td><a href="/driver/edit/address_company_from/{{ address.pk }}/" class="btn btn-primary">Edit</a></td>
+                <td><a href="/driver/delete/address_company_from/{{ address.pk }}/" class="btn btn-warning">Delete</a></td>
             </tr>
         {% endfor %}
         </tbody>

@@ -2,12 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import *
 from Driver.forms import *
 from django.views import View
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 
 
 class UserView(LoginRequiredMixin, View):
@@ -71,14 +67,70 @@ class AddressCompanyFromAllView(View):
 
 class AddressCompanyFromView(View):
     def get(self, request, id):
+        cod = 'from'
         name = 'Address Company From'
         company = get_object_or_404(AddressCompanyFromModel, pk=id)
         ctx = {
             'company': company,
             'id': id,
             'name': name,
+            'cod': cod,
         }
         return render(request, 'address_id.html', ctx)
+
+
+class AddressCompanyFromEditView(View):
+    def get(self, request, id):
+        name = 'Edit Address Company From'
+        obj = get_object_or_404(AddressCompanyFromModel, pk=id)
+        form = AddressCompanyFromForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit Address Company From'
+        obj = get_object_or_404(AddressCompanyFromModel, pk=id)
+        form = AddressCompanyFromForm(request.POST, instance=obj)
+        if form.is_valid():
+            company_name = form.cleaned_data.get("company_name")
+            address_country = form.cleaned_data.get("address_country")
+            address_city = form.cleaned_data.get("address_city")
+            address_zip_code = form.cleaned_data.get("address_zip_code")
+            address_street = form.cleaned_data.get("address_street")
+            address_property_first = form.cleaned_data.get("address_property_first")
+            address_property_second = form.cleaned_data.get("address_property_second")
+            address_more_info = form.cleaned_data.get("address_more_info")
+            company = AddressCompanyFromModel()
+            company.company_name = company_name.upper()
+            company.address_country = address_country
+            company.address_city = address_city.upper()
+            company.address_zip_code = address_zip_code
+            company.address_street = address_street.upper()
+            company.address_property_first = address_property_first
+            company.address_property_second = address_property_second
+            company.address_more_info = address_more_info
+            if AddressCompanyFromModel.objects.filter(company_name=company_name.upper(),
+                                                      address_country=address_country,
+                                                      address_city=address_city.upper(),
+                                                      address_zip_code=address_zip_code,
+                                                      address_street=address_street.upper(),
+                                                      address_property_first=address_property_first):
+                message = 'Nothing changed'
+                return render(request, "edit.html", locals())
+            else:
+                form.save()
+                message = 'Company edit'
+                url = f'/driver/address_company_from/{obj.id}/'
+                return redirect(url, message)
+
+
+class AddressCompanyFromDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete Address Company From'
+        company = get_object_or_404(AddressCompanyFromModel, pk=id)
+        company.delete()
+        message = 'Company address delete'
+        url = f'/driver/all/address_company_from/'
+        return redirect(url, message)
 
 
 class AddressCompanyToAddView(LoginRequiredMixin, View):
@@ -137,26 +189,81 @@ class AddressCompanyToAllView(View):
 
 class AddressCompanyToView(View):
     def get(self, request, id):
+        cod = 'to'
         name = 'Address Company To'
         company = get_object_or_404(AddressCompanyToModel, pk=id)
         ctx = {
             'company': company,
             'id': id,
             'name': name,
+            'cod': cod,
         }
         return render(request, 'address_id.html', ctx)
 
 
+class AddressCompanyToEditView(View):
+    def get(self, request, id):
+        name = 'Edit Address Company To'
+        obj = get_object_or_404(AddressCompanyToModel, pk=id)
+        form = AddressCompanyToForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit Address Company To'
+        obj = get_object_or_404(AddressCompanyToModel, pk=id)
+        form = AddressCompanyToForm(request.POST, instance=obj)
+        if form.is_valid():
+            company_name = form.cleaned_data.get("company_name")
+            address_country = form.cleaned_data.get("address_country")
+            address_city = form.cleaned_data.get("address_city")
+            address_zip_code = form.cleaned_data.get("address_zip_code")
+            address_street = form.cleaned_data.get("address_street")
+            address_property_first = form.cleaned_data.get("address_property_first")
+            address_property_second = form.cleaned_data.get("address_property_second")
+            address_more_info = form.cleaned_data.get("address_more_info")
+            company = AddressCompanyToModel()
+            company.company_name = company_name.upper()
+            company.address_country = address_country
+            company.address_city = address_city.upper()
+            company.address_zip_code = address_zip_code
+            company.address_street = address_street.upper()
+            company.address_property_first = address_property_first
+            company.address_property_second = address_property_second
+            company.address_more_info = address_more_info
+            if AddressCompanyFromModel.objects.filter(company_name=company_name.upper(),
+                                                      address_country=address_country,
+                                                      address_city=address_city.upper(),
+                                                      address_zip_code=address_zip_code,
+                                                      address_street=address_street.upper(),
+                                                      address_property_first=address_property_first):
+                message = 'Nothing changed'
+                return render(request, "edit.html", locals())
+            else:
+                form.save()
+                message = 'Company edit'
+                url = f'/driver/address_company_to/{obj.id}/'
+                return redirect(url, message)
+
+
+class AddressCompanyToDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete Address Company To'
+        company = get_object_or_404(AddressCompanyToModel, pk=id)
+        company.delete()
+        message = 'Company address delete'
+        url = f'/driver/all/address_company_to/'
+        return redirect(url, message)
+
+
 class TrailerAddView(LoginRequiredMixin, View):
     def get(self, request):
-        name = 'Trailer Add'
+        name = 'Add Trailer'
         form = TrailerForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
-        name = 'Trailer Add'
+        name = 'Add Trailer'
         form = TrailerForm(request.POST)
-        car = CarModel.objects.filter(trailer_id__)
         if form.is_valid():
             model = form.cleaned_data.get('model')
             trailer_number = form.cleaned_data.get('trailer_number')
@@ -174,17 +281,9 @@ class TrailerAddView(LoginRequiredMixin, View):
                 return render(request, "add.html", locals())
             else:
                 trailer.save()
-                try:
-                    car_trailer_id = CarModel.objects.get(trailer_id=trailer_id)
-                    if trailer.id == car_trailer_id:
-                        message = 'Company added'
-                        url = f'/driver/trailer/{trailer.id}/'
-                        car = CarModel.objects.get(car_number=car_number)
-
-                        return redirect(url, message, car)
-                except:
-                    return redirect(url, message)
-                # return redirect('trailer', trailer_id=trailer.id)
+                message = 'Trailer added'
+                url = f'/driver/trailer/{trailer.id}/'
+                return redirect(url, message)
         else:
             message = "Try again"
             request.session['message'] = message
@@ -194,7 +293,7 @@ class TrailerAddView(LoginRequiredMixin, View):
 class TrailerAllView(View):
     def get(self, request):
         name = 'All Trailer'
-        all_trailer = TrailerModel.objects.all()
+        trailer = TrailerModel.objects.all()
         return render(request, 'all_trailer.html', locals())
 
 
@@ -208,6 +307,50 @@ class TrailerView(View):
             'name': name,
         }
         return render(request, 'trailer_id.html', ctx)
+
+
+class TrailerEditView(View):
+    def get(self, request, id):
+        name = 'Edit Trailer'
+        obj = get_object_or_404(TrailerModel, pk=id)
+        form = TrailerForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit Trailer'
+        obj = get_object_or_404(TrailerModel, pk=id)
+        form = TrailerForm(request.POST, instance=obj)
+        if form.is_valid():
+            model = form.cleaned_data.get('model')
+            trailer_number = form.cleaned_data.get('trailer_number')
+            weighs = form.cleaned_data.get('weighs')
+            tons_cal_load = form.cleaned_data.get('tons_can_load')
+            cargo_space = form.cleaned_data.get('cargo_space')
+            trailer = TrailerModel()
+            trailer.model = model
+            trailer.trailer_number = trailer_number.upper()
+            trailer.weighs = weighs
+            trailer.tons_can_load = tons_cal_load
+            trailer.cargo_space = cargo_space
+            if TrailerModel.objects.filter(model=trailer.model, weighs=trailer.weighs,
+                                           tons_can_load=trailer.tons_can_load, cargo_space=trailer.cargo_space):
+                message = 'Nothing changed'
+                return render(request, "edit.html", locals())
+            else:
+                form.save()
+                message = 'Trailer edit'
+                url = f'/driver/trailer/{obj.id}/'
+                return redirect(url, message)
+
+
+class TrailerDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete Trailer'
+        obj = get_object_or_404(TrailerModel, pk=id)
+        obj.delete()
+        message = 'Trailer delete'
+        url = f'/driver/all/trailer/'
+        return redirect(url, message)
 
 
 class CarAddView(LoginRequiredMixin, View):
@@ -252,7 +395,7 @@ class CarAddView(LoginRequiredMixin, View):
 class CarAllView(View):
     def get(self, request):
         name = 'Car'
-        all_car = CarModel.objects.all()
+        car = CarModel.objects.all()
         return render(request, 'all_car.html', locals())
 
 
@@ -266,6 +409,54 @@ class CarView(View):
             'name': name,
         }
         return render(request, 'car_id.html', ctx)
+
+
+class CarEditView(View):
+    def get(self, request, id):
+        name = 'Edit Car'
+        obj = get_object_or_404(CarModel, pk=id)
+        form = CarForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit Car'
+        obj = get_object_or_404(CarModel, pk=id)
+        form = CarForm(request.POST, instance=obj)
+        if form.is_valid():
+            model = form.cleaned_data.get('model')
+            have_to = form.cleaned_data.get('have_to')
+            car_number = form.cleaned_data.get('car_number')
+            weighs = form.cleaned_data.get('weighs')
+            tons_cal_load = form.cleaned_data.get('tons_can_load')
+            cargo_space = form.cleaned_data.get('cargo_space')
+            trailer = form.cleaned_data.get('trailer')
+            car = CarModel()
+            car.model = model
+            car.have_to = have_to
+            car.car_number = car_number.upper()
+            car.weighs = weighs
+            car.tons_can_load = tons_cal_load
+            car.cargo_space = cargo_space
+            car.trailer = trailer
+            if CarModel.objects.filter(model=car.model, weighs=car.weighs,
+                                           tons_can_load=car.tons_can_load, cargo_space=car.cargo_space):
+                message = 'Nothing changed'
+                return render(request, "edit.html", locals())
+            else:
+                form.save()
+                message = 'Car edit'
+                url = f'/driver/car/{obj.id}/'
+                return redirect(url, message)
+
+
+class CarDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete Car'
+        obj = get_object_or_404(CarModel, pk=id)
+        obj.delete()
+        message = 'Car delete'
+        url = f'/driver/all/car/'
+        return redirect(url, message)
 
 
 class CargoAddView(LoginRequiredMixin, View):

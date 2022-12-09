@@ -15,7 +15,7 @@ STATUS = (
 
 STATUS_PROBLEM = (
     ("positive", "Positive"),
-    ("Raport problem", "Raport problem")
+    ("raport problem", "Raport problem")
 )
 
 NUMBER = (
@@ -25,7 +25,7 @@ NUMBER = (
 )
 
 DRIVER_LICENSE = (
-    ("b", "B"),
+    ("B", "B"),
     ("B+E", "B+E"),
     ("C", "C"),
     ("C+E", "C+E"),

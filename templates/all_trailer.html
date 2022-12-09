@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% block title %} {{ name }} {% endblock %}
 {% block content %}
     <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -10,17 +9,21 @@
             <th scope="col">Weighs</th>
             <th scope="col">Can load</th>
             <th scope="col">Cargo space</th>
+            <th scope="col"><a href="/driver/add/trailer/" class="btn btn-primary">Add</a></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        {% for trailer in all_trailer %}
+        {% for object in trailer %}
             <tr class="table-activ">
-                <th scope="row">{{ trailer.pk }}</th>
-                <td>{{ trailer.model }}</td>
-                <td><a href="/driver/trailer/{{ trailer.pk }}/">{{ trailer.trailer_number }}</a></td>
-                <td>{{ trailer.weighs }} (kilograms)</td>
-                <td>{{ trailer.tons_can_load }} (kilograms)</td>
-                <td>{{ trailer.cargo_space }}</td>
+                <th scope="row">{{ object.pk }}</th>
+                <td>{{ object.model }}</td>
+                <td><a href="/driver/trailer/{{ object.pk }}/">{{ object.trailer_number }}</a></td>
+                <td>{{ object.weighs }} (kilograms)</td>
+                <td>{{ object.tons_can_load }} (kilograms)</td>
+                <td>{{ object.cargo_space }}</td>
+                <td><a href="/driver/edit/trailer/{{ object.pk }}/" class="btn btn-primary">Edit</a></td>
+                <td><a href="/driver/delete/trailer/{{ object.pk }}/" class="btn btn-warning">Delete</a></td>
             </tr>
         {% endfor %}
         </tbody>
