@@ -1,14 +1,16 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, \
-    TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
+from django.urls import reverse_lazy
+from django.http import HttpResponse, HttpResponseRedirect
+from .models import *
 from Driver.forms import *
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 
-class UserView(View):
+class UserView(LoginRequiredMixin, View):
     def get(self, request):
         users = UserModel.objects.exclude(is_superuser=True)
         return render(request, 'all_user.html', locals())
@@ -16,10 +18,12 @@ class UserView(View):
 
 class AddressCompanyFromAddView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Add Address Company From'
         form = AddressCompanyFromForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
+        name = 'Add Address Company From'
         form = AddressCompanyFromForm(request.POST)
         if form.is_valid():
             company_name = form.cleaned_data.get("company_name")
@@ -30,32 +34,61 @@ class AddressCompanyFromAddView(LoginRequiredMixin, View):
             address_property_first = form.cleaned_data.get("address_property_first")
             address_property_second = form.cleaned_data.get("address_property_second")
             address_more_info = form.cleaned_data.get("address_more_info")
-            companyFrom = AddressCompanyFromModel()
-            companyFrom.company_name = company_name
-            companyFrom.address_country = address_country
-            companyFrom.address_city = address_city
-            companyFrom.address_zip_code = address_zip_code
-            companyFrom.address_street = address_street
-            companyFrom.address_property_first = address_property_first
-            companyFrom.address_property_second = address_property_second
-            companyFrom.address_more_info = address_more_info
-            companyFrom.save()
-            return redirect('companyFrom', companyFrom_id=companyFrom.id)
-        return render(request, "add.html", locals())
+            company = AddressCompanyFromModel()
+            company.company_name = company_name.upper()
+            company.address_country = address_country
+            company.address_city = address_city.upper()
+            company.address_zip_code = address_zip_code
+            company.address_street = address_street.upper()
+            company.address_property_first = address_property_first
+            company.address_property_second = address_property_second
+            company.address_more_info = address_more_info
+            if AddressCompanyFromModel.objects.filter(company_name=company_name.upper(),
+                                                      address_country=address_country,
+                                                      address_city=address_city.upper(),
+                                                      address_zip_code=address_zip_code,
+                                                      address_street=address_street.upper(),
+                                                      address_property_first=address_property_first).exists():
+                message = 'Objects already exist'
+                return render(request, "add.html", locals())
+            else:
+                company.save()
+                message = 'Company added'
+                url = f'/driver/address_company_from/{company.id}/'
+                return redirect(url, message)
+        else:
+            message = "Try again"
+            request.session['message'] = message
+            return render(request, "add.html", locals())
 
 
 class AddressCompanyFromAllView(View):
     def get(self, request):
-        all_address_from = AddressCompanyFromModel.objects.all()
+        name = 'All Address Company From'
+        company = AddressCompanyFromModel.objects.all()
         return render(request, 'all_address_from.html', locals())
+
+
+class AddressCompanyFromView(View):
+    def get(self, request, id):
+        name = 'Address Company From'
+        company = get_object_or_404(AddressCompanyFromModel, pk=id)
+        ctx = {
+            'company': company,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'address_id.html', ctx)
 
 
 class AddressCompanyToAddView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Add Address Company To'
         form = AddressCompanyToForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
+        name = 'Add Address Company To'
         form = AddressCompanyToForm(request.POST)
         if form.is_valid():
             company_name = form.cleaned_data.get('company_name')
@@ -66,33 +99,64 @@ class AddressCompanyToAddView(LoginRequiredMixin, View):
             address_property_first = form.cleaned_data.get('address_property_first')
             address_property_second = form.cleaned_data.get('address_property_second')
             address_more_info = form.cleaned_data.get('address_more_info')
-            companyTo = AddressCompanyToModel()
-            companyTo.company_name = company_name
-            companyTo.address_country = address_country
-            companyTo.address_city = address_city
-            companyTo.address_zip_code = address_zip_code
-            companyTo.address_street = address_street
-            companyTo.address_property_first = address_property_first
-            companyTo.address_property_second = address_property_second
-            companyTo.address_more_info = address_more_info
-            companyTo.save()
-            return redirect('companyTo', companyTo_id=companyTo.id)
-        return render(request, 'add.html', locals())
+            company = AddressCompanyToModel()
+            company.company_name = company_name.upper()
+            company.address_country = address_country
+            company.address_city = address_city.upper()
+            company.address_zip_code = address_zip_code
+            company.address_street = address_street.upper()
+            company.address_property_first = address_property_first
+            company.address_property_second = address_property_second
+            company.address_more_info = address_more_info
+            company.save()
+            if AddressCompanyToModel.objects.filter(company_name=company_name.upper(),
+                                                    address_country=address_country,
+                                                    address_city=address_city.upper(),
+                                                    address_zip_code=address_zip_code,
+                                                    address_street=address_street.upper(),
+                                                    address_property_first=address_property_first).exists():
+                message = 'Objects already exist'
+                return render(request, "add.html", locals())
+            else:
+                company.save()
+                message = 'Company added'
+                url = f'/driver/address_company_to/{company.id}/'
+                return redirect(url, message)
+        else:
+            message = "Try again"
+            request.session['message'] = message
+            return render(request, "add.html", locals())
 
 
 class AddressCompanyToAllView(View):
     def get(self, request):
-        all_address_to = AddressCompanyToModel.objects.all()
+        name = 'All Address Company To'
+        company = AddressCompanyToModel.objects.all()
         return render(request, 'all_address_to.html', locals())
+
+
+class AddressCompanyToView(View):
+    def get(self, request, id):
+        name = 'Address Company To'
+        company = get_object_or_404(AddressCompanyToModel, pk=id)
+        ctx = {
+            'company': company,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'address_id.html', ctx)
 
 
 class TrailerAddView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Trailer Add'
         form = TrailerForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
+        name = 'Trailer Add'
         form = TrailerForm(request.POST)
+        car = CarModel.objects.filter(trailer_id__)
         if form.is_valid():
             model = form.cleaned_data.get('model')
             trailer_number = form.cleaned_data.get('trailer_number')
@@ -101,27 +165,59 @@ class TrailerAddView(LoginRequiredMixin, View):
             cargo_space = form.cleaned_data.get('cargo_space')
             trailer = TrailerModel()
             trailer.model = model
-            trailer.trailer_number = trailer_number
+            trailer.trailer_number = trailer_number.upper()
             trailer.weighs = weighs
             trailer.tons_can_load = tons_cal_load
             trailer.cargo_space = cargo_space
-            trailer.save()
-            return redirect('trailer', trailer_id=trailer.id)
-        return render(request, 'add.html', locals())
+            if TrailerModel.objects.filter(trailer_number=trailer_number.upper()).exists():
+                message = 'Objects already exist'
+                return render(request, "add.html", locals())
+            else:
+                trailer.save()
+                try:
+                    car_trailer_id = CarModel.objects.get(trailer_id=trailer_id)
+                    if trailer.id == car_trailer_id:
+                        message = 'Company added'
+                        url = f'/driver/trailer/{trailer.id}/'
+                        car = CarModel.objects.get(car_number=car_number)
+
+                        return redirect(url, message, car)
+                except:
+                    return redirect(url, message)
+                # return redirect('trailer', trailer_id=trailer.id)
+        else:
+            message = "Try again"
+            request.session['message'] = message
+            return render(request, "add.html", locals())
 
 
 class TrailerAllView(View):
     def get(self, request):
-        all_trailer = UserModel.objects.all()
+        name = 'All Trailer'
+        all_trailer = TrailerModel.objects.all()
         return render(request, 'all_trailer.html', locals())
+
+
+class TrailerView(View):
+    def get(self, request, id):
+        name = 'Trailer'
+        trailer = get_object_or_404(TrailerModel, pk=id)
+        ctx = {
+            'trailer': trailer,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'trailer_id.html', ctx)
 
 
 class CarAddView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Car Add'
         form = CarForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
+        name = 'Car Add'
         form = CarForm(request.POST)
         if form.is_valid():
             model = form.cleaned_data.get('model')
@@ -134,28 +230,52 @@ class CarAddView(LoginRequiredMixin, View):
             car = CarModel()
             car.model = model
             car.have_to = have_to
-            car.car_number = car_number
+            car.car_number = car_number.upper()
             car.weighs = weighs
             car.tons_can_load = tons_cal_load
             car.cargo_space = cargo_space
             car.trailer = trailer
-            car.save()
-            return redirect('car', car_id=car.id)
-        return render(request, 'add.html', locals())
+            if CarModel.objects.filter(car_number=car_number.upper()).exists():
+                message = 'Objects already exist'
+                return render(request, "add.html", locals())
+            else:
+                car.save()
+                message = 'Company added'
+                url = f'/driver/car/{car.id}/'
+                return redirect(url, message)
+        else:
+            message = "Try again"
+            request.session['message'] = message
+            return render(request, "add.html", locals())
 
 
 class CarAllView(View):
     def get(self, request):
+        name = 'Car'
         all_car = CarModel.objects.all()
         return render(request, 'all_car.html', locals())
 
 
+class CarView(View):
+    def get(self, request, id):
+        name = 'Car'
+        car = get_object_or_404(CarModel, pk=id)
+        ctx = {
+            'car': car,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'car_id.html', ctx)
+
+
 class CargoAddView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Cargo Add'
         form = CargoForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
+        name = 'Cargo Add'
         form = CargoForm(request.POST)
         if form.is_valid():
             company_address_from = form.cleaned_data.get('company_address_from')
@@ -196,16 +316,19 @@ class CargoAddView(LoginRequiredMixin, View):
 
 class CargoAllView(View):
     def get(self, request):
+        name = 'Cargo'
         all_Cargo = CargoModel.objects.all()
         return render(request, 'all_cargo.html', locals())
 
 
 class PlanCargoAddView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Plan Cargo Add'
         form = PlanCargoForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
+        name = 'Plan Cargo Add'
         form = PlanCargoForm(request.POST)
         if form.is_valid():
             driver = form.cleaned_data.get('driver')
@@ -226,16 +349,19 @@ class PlanCargoAddView(LoginRequiredMixin, View):
 
 class PlanCargoAllView(View):
     def get(self, request):
-        all_user = UserModel.objects.all()
-        return render(request, 'all_user.html', locals())
+        name = 'Plan Cargo'
+        plan_cargo_all = PlanCargoModel.objects.all()
+        return render(request, 'all_plan_cargo.html', locals())
 
 
 class DriverWorkerAddView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Driver Worker Add'
         form = DriverWorkerForm()
         return render(request, 'add.html', locals())
 
     def post(self, request):
+        name = 'Driver Worker Add'
         form = DriverWorkerForm(request.POST)
         if form.is_valid():
             point = form.cleaned_data.get('point')
@@ -260,34 +386,36 @@ class DriverWorkerAddView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
-class DriverWorkerUserView(View):
+class DriverWorkerUserView(LoginRequiredMixin, View):
     def get(self, request):
+        name = 'Driver Worker'
         all_user = UserModel.objects.all()
         return render(request, 'all_user.html', locals())
 
 
-class AddUserView(View):
+class AddUserView(LoginRequiredMixin, View):
     template_name = 'add.html'
+    name = 'User Add'
+
     def get(self, request):
         form = AddUserForm()
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, self.name, locals())
 
     def post(self, request):
         form = AddUserForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('add_user')
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, locals())
 
 
-class ResetPasswordView(PermissionRequiredMixin, View):
+class ResetPasswordView(LoginRequiredMixin, View):
+    name = 'Reset Password'
     template_name = 'add.html'
     permission_required = 'auth.change_user'
 
     def get(self, request):
-        return render(request, self.template_name, {
-            'form': ResetPasswordForm()
-        })
+        return render(request, self.template_name, self.name, self.permission_required, {'form': ResetPasswordForm()})
 
     def post(self, request, pk):
         form = ResetPasswordForm(request.POST)
@@ -296,6 +424,4 @@ class ResetPasswordView(PermissionRequiredMixin, View):
             user.set_password(form.cleaned_data.get('new_password'))
             user.save()
             return redirect('/login')
-        return render(request, self.template_name, {
-            'form': form
-        })
+        return render(request, self.template_name, self.name, self.permission_required, {'form': form})

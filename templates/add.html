@@ -1,9 +1,18 @@
 {% extends 'base.html' %}
-
+{% load bootstrap %}
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}<br/>
-    <input type="submit" value="Submit"/>
-</form>
+    <div class="card text-center" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ name }}</h5>
+            <h3>{{ message }}</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|bootstrap }}<br/>
+                <input type="submit" value="Send" class="btn btn-success" style="margin-top: 5px; margin-bottom: 5px;">
+                <input type="reset" value="Clear" class="btn btn-danger" style="margin-top: 5px; margin-bottom: 5px;">
+            </form>
+            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div>
 {% endblock %}

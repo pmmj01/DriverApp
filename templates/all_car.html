@@ -1,23 +1,32 @@
 {% extends 'base.html' %}
-{% block title %} Car {% endblock %}
+{% block title %} {{ name }} {% endblock %}
 {% block content %}
-    {{ all_car }}
-    {% for car in all_car %}
-        <ul>
-            <tr><b>Model: </b></tr>
-                <li><p>{{ car.model }}<p></li>
-            <tr><b>Have to: </b></tr>
-                <li><p>{{ car.have_to }}</p></li>
-            <tr><b>Number: </b></tr>
-                <li><p>{{ car.trailer_number }}</p></li>
-            <tr><b>Weighs: </b></tr>
-                <li><p>{{ car.weighs }}</p></li>
-            <tr><b>Can load: </b></tr>
-                <li><p>{{ car.tons_can_load }}</p></li>
-            <tr><b>Cargo space: </b></tr>
-                <li><p>{{ car.cargo_space }}<p></li>
-            <tr><b>Trailer: </b></tr>
-                <li><p>{{ car.trailer }}<p></li>
-        </ul>
-    {% endfor %}
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Model</th>
+            <th scope="col">Driver license</th>
+            <th scope="col">Number</th>
+            <th scope="col">Weighs</th>
+            <th scope="col">Can load</th>
+            <th scope="col">Cargo space</th>
+            <th scope="col">Trailer</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for car in all_car %}
+            <tr class="table-activ">
+                <th scope="row">{{ trailer.pk }}</th>
+                <td>{{ car.model }}</td>
+                <td>{{ car.have_to }}</td>
+                <td><a href="/driver/car/{{ car.pk }}/">{{ car.car_number }}</a></td>
+                <td>{{ car.weighs }} (kilograms)</td>
+                <td>{{ car.tons_can_load }} (kilograms)</td>
+                <td>{{ car.cargo_space }}</td>
+                <td><a href="/driver/trailer/{{ trailer.pk }}/">{{ car.trailer }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+<ul class="ul_name">
+<div>
+    <h5>{{ message }}</h5>
+</div>
+    <li><b>Company name:</b> {{ company.company_name }}</li>
+    <li><b>Country:</b> {{ company.address_country }}</li>
+    <li><b>City:</b> {{ company.address_city }}</li>
+    <li><b>Zip code:</b> {{ company.address_zip_code }}</li>
+    <li><b>Street:</b> {{ company.address_street }}</li>
+    <li><b>First line:</b> {{ company.address_property_first }}</li>
+    <li><b>Second line:</b> {{ company.address_property_second }}</li>
+    <li><b>More info:</b> {{ company.address_more_info }}</li>
+</ul>
+{% endblock %}

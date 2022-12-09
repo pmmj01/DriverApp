@@ -2,25 +2,17 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
+from django.forms import ModelForm, TextInput
 from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, \
     TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
+from .choices import *
+from django.utils.translation import gettext_lazy as _
 
 
 class AddUserForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ['phone_number', 'user_type', 'first_name', 'last_name']
-
-    def clean_login(self):
-        if UserModel.objects.filter(phone_number=self.cleaned_data.get('login')).exists():
-            raise ValidationError('This login already exists!')
-        return self.cleaned_data.get('login')
-
-    def clean_password_repeat(self):
-        if self.cleaned_data.get('password') != self.cleaned_data.get('password_repeat'):
-            raise ValidationError('The entered passwords are different!')
-        return self.cleaned_data.get('password_repeat')
 
 
 class ResetPasswordForm(forms.Form):
@@ -37,12 +29,30 @@ class AddressCompanyFromForm(ModelForm):
     class Meta:
         model = AddressCompanyFromModel
         fields = '__all__'
+        labels = {
+            'address_country': _('Country'),
+            'address_city': _('City'),
+            'address_zip_code': _('Zip code'),
+            'address_street': _('Street'),
+            'address_property_first': _('First line'),
+            'address_property_second': _('Second line'),
+            'address_more_info': _('More information'),
+        }
 
 
 class AddressCompanyToForm(ModelForm):
     class Meta:
         model = AddressCompanyToModel
         fields = '__all__'
+        labels = {
+            'address_country': _('Country'),
+            'address_city': _('City'),
+            'address_zip_code': _('Zip code'),
+            'address_street': _('Street'),
+            'address_property_first': _('First line'),
+            'address_property_second': _('Second line'),
+            'address_more_info': _('More information'),
+        }
 
 
 class DriverForm(ModelForm):
@@ -61,18 +71,43 @@ class TrailerForm(ModelForm):
     class Meta:
         model = TrailerModel
         fields = '__all__'
+        help_texts = {
+            'weighs': _('Weight in kilograms'),
+            'tons_can_load': _('Weight in kilograms'),
+            'cargo_space': _('Space for euro pallets'),
+        }
 
 
 class CarForm(ModelForm):
     class Meta:
         model = CarModel
         fields = '__all__'
+        labels = {
+            'have_to': _('Driver license'),
+            'trailer': _('Assign trailer')
+        }
+        help_texts = {
+            'have_to': _('What driving license should you drive'),
+            'weighs': _('Weight in kilograms'),
+            'tons_can_load': _('Weight in kilograms'),
+            'cargo_space': _('Space for euro pallets'),
+        }
 
 
 class CargoForm(ModelForm):
     class Meta:
         model = CargoModel
         fields = '__all__'
+        labels = {
+            'have_to': _('Driver license'),
+            'car_trailer_name': _('Assign trailer')
+        }
+        help_texts = {
+            'have_to': _('What driving license should you drive'),
+            'weighs': _('Weight in kilograms'),
+            'pallets': _('How many pallets or goods'),
+            'place_of_pallets': _('Space for euro pallets'),
+        }
 
 
 class PlanCargoForm(ModelForm):
@@ -85,6 +120,9 @@ class DriverWorkerForm(ModelForm):
     class Meta:
         model = DriverWorkerModel
         fields = '__all__'
+        labels = {
+            'date': _('Date of departure'),
+        }
 
 
 class MessageForm(ModelForm):

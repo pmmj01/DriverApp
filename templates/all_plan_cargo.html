@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} Plan Cargo {% endblock %}
+{% block content %}
+{{ all_plan_cargo }}
+    {% for plan_cargo in all_plan_cargo %}
+        <ul>
+            <tr><b>Driver: </b></tr>
+                <li><p>{{ plan_cargo.driver }}<p></li>
+            <tr><b>Truck: </b></tr>
+                <li><p>{{ plan_cargo.truck }}</p></li>
+            <tr><b>Forwarder: </b></tr>
+                <li><p>{{ plan_cargo.forwarder }}</p></li>
+            <tr><b>Description: </b></tr>
+                <li><p>{{ plan_cargo.description }}</p></li>
+            <tr><b>Date: </b></tr>
+                <li><p>{{ plan_cargo.date }}<p></li>
+        </ul>
+    {% endfor %}
+{% endblock %}
