@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <ul class="ul_name">
+        <div>
+            <h5>{{ message }}</h5>
+        </div>
+        <div>
+            <a href="/driver/add/cargo/" class="btn btn-primary">Add</a>
+            <a href="/driver/edit/cargo/{{ cargo.pk }}" class="btn btn-primary">Edit</a>
+        </div>
+        <li><b>Company from:</b> {{ cargo.company_address_from }}</li>
+        <li><b>Loading date:</b> {{ cargo.loading_date }} {{ cargo.loading_hour }}</li>
+        <li><b>Company to:</b> {{ cargo.company_address_to }}</li>
+        <li><b>Unloading date:</b> {{ cargo.unloading_date }} {{ cargo.unloading_hour }}</li>
+        <li><b>Notification:</b> {{ cargo.notification }}</li>
+        <li><b>Reference nubmer:</b> {{ cargo.reference_number }}</li>
+        <li><b>Fix/Customs:</b> {{ cargo.fix }} {{ cargo.customs }}</li>
+        <li><b>Weight:</b> {{ cargo.weight }}</li>
+        <li><b>Pallets/Place:</b> {{ cargo.pallets }} {{ cargo.place_of_pallets }}</li>
+        <li><b>Forwarder:</b> {{ cargo.forwarder }}</li>
+        <li><b>Description:</b> {{ cargo.description }} {{ cargo.date }}</li>
+    </ul>
+{% endblock %}

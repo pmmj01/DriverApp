@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Point</th>
+            <th scope="col">Date</th>
+            <th scope="col">Confirm arrival</th>
+            <th scope="col">Confirm unloading</th>
+            <th scope="col">Confirm arrival</th>
+            <th scope="col">Confirm loading</th>
+            <th scope="col">Raport</th>
+            <th scope="col">Message_to</th>
+            <th scope="col">Message</th>
+            <th scope="col"><a href="/driver/add/driver_worker/" class="btn btn-primary">Add</a></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for driver_worker in all_driver_worker %}
+            <tr class="table-activ">
+                <th scope="row">{{ driver_worker.pk }}</th>
+                <td>{{ driver_worker.point }}</td>
+                <td>{{ driver_worker.date }}</td>
+                <td>{{ driver_worker.confirm_arrival }}</td>
+                <td>{{ driver_worker.confirm_unloading }}</td>
+                <td>{{ driver_worker.confirm_loading }}</td>
+                <td>{{ driver_worker.raport }}</td>
+                <td>{{ driver_worker.message_to }}</td>
+                <td>{{ driver_worker.message }}</td>
+                <td><a href="/driver/edit/driver_worker/{{ driver_worker.pk }}/" class="btn btn-primary">Edit</a></td>
+                <td><a href="/driver/delete/driver_worker/{{ driver_worker.pk }}/" class="btn btn-warning">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

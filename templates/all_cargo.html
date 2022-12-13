@@ -1,38 +1,44 @@
 {% extends 'base.html' %}
 {% block content %}
-    {{ all_Cargo }}
-    {% for cargo in all_Cargo %}
-        <ul>
-            <tr><b>Address From: </b></tr>
-                <li><p>{{ cargo.company_address_from }}<p></li>
-            <tr><b>Day of loading: </b></tr>
-                <li><p>{{ cargo.loading_date }}<p></li>
-            <tr><b>Hour of loading From: </b></tr>
-                <li><p>{{ cargo.loading_hour }}<p></li>
-            <tr><b>Address To: </b></tr>
-                <li><p>{{ cargo.company_address_to }}<p></li>
-            <tr><b>Day of unloading: </b></tr>
-                <li><p>{{ cargo.unloading_date }}<p></li>
-            <tr><b>Hour of unloading: </b></tr>
-                <li><p>{{ cargo.unloading_hour }}<p></li>
-            <tr><b>More info: </b></tr>
-                <li><p>{{ cargo.description }}<p></li>
-            <tr><b>Fix: </b></tr>
-                <li><p>{{ cargo.fix }}<p></li>
-            <tr><b>Customs: </b></tr>
-                <li><p>{{ cargo.customs }}<p></li>
-            <tr><b>Weight: </b></tr>
-                <li><p>{{ cargo.weight }}<p></li>
-            <tr><b>Pallets: </b></tr>
-                <li><p>{{ cargo.pallets }}<p></li>
-            <tr><b>Place of pallets: </b></tr>
-                <li><p>{{ cargo.place_of_pallets }}<p></li>
-            <tr><b>Truck: </b></tr>
-                <li><p>{{ cargo.truck }}<p></li>
-            <tr><b>Forwarder: </b></tr>
-                <li><p>{{ cargo.forwarder }}<p></li>
-            <tr><b>Date: </b></tr>
-                <li><p>{{ cargo.date }}<p></li>
-        </ul>
-    {% endfor %}
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Company from</th>
+            <th scope="col">Loading date</th>
+            <th scope="col">Company to</th>
+            <th scope="col">Unloading date</th>
+            <th scope="col">Notification</th>
+            <th scope="col">Reference number</th>
+            <th scope="col">Fix/Customs</th>
+            <th scope="col">Weight</th>
+            <th scope="col">Pallets</th>
+            <th scope="col">Truck</th>
+            <th scope="col">Forwarder</th>
+            <th scope="col">Description</th>
+            <th scope="col"><a href="/driver/add/cargo/" class="btn btn-primary">Add</a></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for cargo in all_cargo %}
+            <tr class="table-activ">
+                <th scope="row">{{ cargo.pk }}</th>
+                <td>{{ cargo.company_address_from }}</td>
+                <td>{{ cargo.loading_date }} {{ cargo.loading_hour }}</td>
+                <td>{{ cargo.company_address_to }}</td>
+                <td>{{ cargo.unloading_date }} {{ cargo.unloading_hour }}</td>
+                <td>{{ cargo.notification }}</td>
+                <td>{{ cargo.reference_number }}</td>
+                <td>{{ cargo.fix }} {{ cargo.customs }}</td>
+                <td>{{ cargo.weight }}</td>
+                <td>{{ cargo.pallets }} {{ cargo.place_of_pallets }}</td>
+                <td>{{ cargo.forwarder }}</td>
+                <td>{{ cargo.description }} {{ cargo.date }}</td>
+                <td><a href="/driver/edit/cargo/{{ cargo.pk }}/" class="btn btn-primary">Edit</a></td>
+                <td><a href="/driver/delete/cargo/{{ cargo.pk }}/" class="btn btn-warning">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

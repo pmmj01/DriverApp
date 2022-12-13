@@ -1,29 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="card text-center" style="width: 30rem;">
-        <div class="card-body">
+        <div class="card-body-inside">
             <h5 class="card-title">{{ name }}</h5>
             <h3>{{ message }}</h3>
             <ul class="ul_name">
-                <div>
+                <div class="card_enter">
                     <h5>{{ message }}</h5>
                 </div>
-                {% if cod == "from" %}
-                    <div id="from">
-                        <a href="/driver/all/address_company_from/" class="btn btn-primary">All</a>
-                        <a href="/driver/add/address_company_from/" class="btn btn-primary">Add</a>
-                        <a href="/driver/delete/address_company_from/{{ company.pk }}/"
-                           class="btn btn-primary">Delete</a>
-                        <a href="/driver/edit/address_company_from/{{ company.pk }}/" class="btn btn-primary">Edit</a>
-                    </div>
-                {% elif cod == 'to' %}
-                    <div id="to">
-                        <a href="/driver/all/address_company_to/" class="btn btn-primary">All</a>
-                        <a href="/driver/add/address_company_to/" class="btn btn-primary">Add</a>
-                        <a href="/driver/delete/address_company_to/{{ company.pk }}/" class="btn btn-primary">Delete</a>
-                        <a href="/driver/edit/address_company_to/{{ company.pk }}/" class="btn btn-primary">Edit</a>
-                    </div>
-                {% endif %}
+                <div>
+                    {% if cod == "from" %}
+                        <div class="menu_edit" id="from">
+                            <a href="/driver/all/address_company_from/" class="btn btn-primary">All</a>
+                            <a href="/driver/add/address_company_from/" class="btn btn-primary">Add</a>
+                            <a href="/driver/delete/address_company_from/{{ company.pk }}/"
+                               class="btn btn-primary">Delete</a>
+                            <a href="/driver/edit/address_company_from/{{ company.pk }}/"
+                               class="btn btn-primary">Edit</a>
+                        </div>
+                    {% elif cod == 'to' %}
+                        <div class="menu_edit" id="to">
+                            <a href="/driver/all/address_company_to/" class="btn btn-primary">All</a>
+                            <a href="/driver/add/address_company_to/" class="btn btn-primary">Add</a>
+                            <a href="/driver/delete/address_company_to/{{ company.pk }}/"
+                               class="btn btn-primary">Delete</a>
+                            <a href="/driver/edit/address_company_to/{{ company.pk }}/" class="btn btn-primary">Edit</a>
+                        </div>
+                    {% endif %}
+                </div>
                 <li><b>Company name:</b> {{ company.company_name }}</li>
                 <li><b>Country:</b> {{ company.address_country }}</li>
                 <li><b>City:</b> {{ company.address_city }}</li>

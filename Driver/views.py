@@ -6,13 +6,131 @@ from Driver.forms import *
 from django.views import View
 
 
-class UserView(LoginRequiredMixin, View):
+#TODO class description
+#TODO User
+#TODO cargo
+#TODO plan
+#TODO worker side
+#TODO info and contact to me
+#TODO tests
+
+
+class UserAddView(LoginRequiredMixin, View):
+    template_name = 'add.html'
+    name = 'User Add'
+
+    def get(self, request):
+        return render(request, self.template_name, {'form': UserAddForm()})
+
+    def post(self, request):
+        form = UserAddForm(request.POST)
+        if form.is_valid():
+            pk = form.cleaned_data.get('id')
+            phone_number = form.cleaned_data.get('phone_number')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            driving_license = form.cleaned_data.get('driving_license')
+            user = UserModel()
+            user.pk = pk
+            user.phone_number = phone_number
+            user.first_name = first_name
+            user.last_name = last_name
+            user.driving_license = driving_license
+            form.save()
+            return redirect('all_user')
+        return render(request, self.template_name, {'form': form})
+
+
+class ResetPasswordView(LoginRequiredMixin, View):
+    name = 'Reset Password'
+    template_name = 'add.html'
+    permission_required = 'auth.change_user'
+
+    def get(self, request):
+        return render(request, self.template_name, self.name, self.permission_required, {'form': ResetPasswordForm()})
+
+    def post(self, request, pk):
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            user = UserModel.objects.get(id=pk)
+            user.set_password(form.cleaned_data.get('new_password'))
+            user.save()
+            return redirect('/login')
+        return render(request, self.template_name, self.name, self.permission_required, {'form': form})
+
+
+class UserAllView(LoginRequiredMixin, View):
+    """
+    The function displays all users except "Super User"
+
+    The user should be logged in to be able to see users in the database,
+    To see all users, you must have "Manager" permissions
+
+    :return list of users.
+    """
     def get(self, request):
         users = UserModel.objects.exclude(is_superuser=True)
         return render(request, 'all_user.html', locals())
 
 
+class UserEditView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Edit User'
+        obj = get_object_or_404(UserModel, pk=id)
+        form = UserAddForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit User'
+        obj = get_object_or_404(UserModel, pk=id)
+        form = UserAddForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            message = 'User edit'
+            url = f'/driver/user/{obj.id}/'
+            return redirect(url, message)
+
+
+class UserView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'User'
+        user = get_object_or_404(UserModel, pk=id)
+        url = f'/driver/user/{id}/'
+        ctx = {
+            'user': user,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'user_id.html', ctx)
+
+
+class UserDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete User'
+        user = get_object_or_404(UserModel, pk=id)
+        user.delete()
+        message = 'User delete'
+        url = f'/driver/all/user'
+        return redirect(url, message)
+
+
 class AddressCompanyFromAddView(LoginRequiredMixin, View):
+    """
+    The function allows you to add the client's company address
+
+    It is obligatory to provide: company name, state, city, zip code, street, property number.
+    Additionally, you can say:
+    more information.
+
+    The function returns the address from large letters.
+
+    :raise If there is a record with the same:
+        Name, state, city, postal code, street, property number.
+        Returns the message "Objects already exist".
+
+    :return Adderss in a view for one full record.
+
+    """
     def get(self, request):
         name = 'Add Address Company From'
         form = AddressCompanyFromForm()
@@ -134,6 +252,22 @@ class AddressCompanyFromDeleteView(LoginRequiredMixin, View):
 
 
 class AddressCompanyToAddView(LoginRequiredMixin, View):
+    """
+    The function allows you to add the client's company address
+
+    It is obligatory to provide: company name, state, city, zip code, street, property number.
+    Additionally, you can say:
+    more information.
+
+    The function returns the address from large letters.
+
+    :raise If there is a record with the same:
+        Name, state, city, postal code, street, property number.
+        Returns the message "Objects already exist".
+
+    :return Adderss in a view for one full record.
+
+    """
     def get(self, request):
         name = 'Add Address Company To'
         form = AddressCompanyToForm()
@@ -501,15 +635,58 @@ class CargoAddView(LoginRequiredMixin, View):
             cargo.forwarder = forwarder
             cargo.date = date
             cargo.save()
-            return redirect('cargo', cargo_id=cargo.id)
+            message = 'Cargo added'
+            url = f'/driver/cargo/{cargo.id}/'
+            return redirect(url, message)
         return render(request, 'add.html', locals())
 
 
 class CargoAllView(View):
     def get(self, request):
         name = 'Cargo'
-        all_Cargo = CargoModel.objects.all()
+        all_cargo = CargoModel.objects.all()
         return render(request, 'all_cargo.html', locals())
+
+
+class CargoView(View):
+    def get(self, request, id):
+        name = 'Cargo'
+        cargo = get_object_or_404(CargoModel, pk=id)
+        ctx = {
+            'cargo': cargo,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'cargo_id.html', ctx)
+
+
+class CargoEditView(View):
+    def get(self, request, id):
+        name = 'Edit Cargo'
+        obj = get_object_or_404(CargoModel, pk=id)
+        form = CargoForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit Cargo'
+        obj = get_object_or_404(CargoModel, pk=id)
+        form = CargoForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            message = 'Cargo edit'
+            url = f'/driver/Cargo/{obj.id}/'
+            return redirect(url, message)
+
+
+class CargoDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete Cargo'
+        obj = get_object_or_404(CargoModel, pk=id)
+        obj.delete()
+        message = 'Cargo delete'
+        url = f'/driver/all/cargo/'
+        return redirect(url, message)
+
 
 
 class PlanCargoAddView(LoginRequiredMixin, View):
@@ -534,7 +711,9 @@ class PlanCargoAddView(LoginRequiredMixin, View):
             plan_cargo.description = description
             plan_cargo.date = date
             plan_cargo.save()
-            return redirect('plan_cargo', plan_cargo_id=plan_cargo.id)
+            message = 'Plan Cargo added'
+            url = f'/driver/plan_cargo/{plan_cargo.id}/'
+            return redirect(url, message)
         return render(request, 'add.html', locals())
 
 
@@ -543,6 +722,58 @@ class PlanCargoAllView(View):
         name = 'Plan Cargo'
         plan_cargo_all = PlanCargoModel.objects.all()
         return render(request, 'all_plan_cargo.html', locals())
+
+
+class PlanCargoView(View):
+    def get(self, request, id):
+        name = 'Trailer'
+        trailer = get_object_or_404(TrailerModel, pk=id)
+        ctx = {
+            'trailer': trailer,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'trailer_id.html', ctx)
+
+
+class PlanCargoEditView(View):
+    def get(self, request, id):
+        name = 'Edit Plan Cargo'
+        obj = get_object_or_404(PlanCargoModel, pk=id)
+        form = PlanCargoForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit Plan Cargo'
+        obj = get_object_or_404(PlanCargoModel, pk=id)
+        form = PlanCargoForm(request.POST, instance=obj)
+        if form.is_valid():
+            driver = form.cleaned_data.get('driver')
+            truck = form.cleaned_data.get('truck')
+            forwarder = form.cleaned_data.get('forwarder')
+            description = form.cleaned_data.get('description')
+            date = form.cleaned_data.get('date')
+            plan_cargo = PlanCargoModel()
+            plan_cargo.driver = driver
+            plan_cargo.truck = truck
+            plan_cargo.forwarder = forwarder
+            plan_cargo.description = description
+            plan_cargo.date = date
+            plan_cargo.save()
+            message = 'Plan Cargo added'
+            url = f'/driver/plan_cargo/{plan_cargo.id}/'
+            return redirect(url, message)
+        return render(request, 'add.html', locals())
+
+
+class PlanCargoDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete Plan Cargo'
+        obj = get_object_or_404(PlanCargoModel, pk=id)
+        obj.delete()
+        message = 'Plan Cargo delete'
+        url = f'/driver/all/plan_cargo/'
+        return redirect(url, message)
 
 
 class DriverWorkerAddView(LoginRequiredMixin, View):
@@ -573,46 +804,72 @@ class DriverWorkerAddView(LoginRequiredMixin, View):
             driver_worker.message_to = message_to
             driver_worker.message = message
             driver_worker.save()
-            return redirect('driver_worker', driver_worker_id=driver_worker.id)
+            message = 'Driver Worker added'
+            url = f'/driver/driver_worker/{driver_worker.id}/'
+            return redirect(url, message)
         return render(request, 'add.html', locals())
 
 
-class DriverWorkerUserView(LoginRequiredMixin, View):
+class DriverWorkerAllView(LoginRequiredMixin, View):
     def get(self, request):
         name = 'Driver Worker'
-        all_user = UserModel.objects.all()
-        return render(request, 'all_user.html', locals())
+        all_driver_worker = DriverWorkerModel.objects.all()
+        return render(request, 'all_driver_worker.html', locals())
 
 
-class AddUserView(LoginRequiredMixin, View):
-    template_name = 'add.html'
-    name = 'User Add'
+class DriverWorkerView(View):
+    def get(self, request, id):
+        name = 'Driver Worker'
+        driver_worker = get_object_or_404(DriverWorkerModel, pk=id)
+        ctx = {
+            'driver_worker': driver_worker,
+            'id': id,
+            'name': name,
+        }
+        return render(request, 'driver_worker_id.html', ctx)
 
-    def get(self, request):
-        form = AddUserForm()
-        return render(request, self.template_name, self.name, locals())
 
-    def post(self, request):
-        form = AddUserForm(request.POST)
+class DriverWorkerEditView(View):
+    def get(self, request, id):
+        name = 'Edit Driver Worker'
+        obj = get_object_or_404(DriverWorkerModel, pk=id)
+        form = DriverWorkerForm(instance=obj)
+        return render(request, 'edit.html', locals())
+
+    def post(self, request, id):
+        name = 'Edit Driver Worker'
+        obj = get_object_or_404(DriverWorkerModel, pk=id)
+        form = DriverWorkerForm(request.POST, instance=obj)
         if form.is_valid():
-            form.save()
-            return redirect('add_user')
-        return render(request, self.template_name, locals())
+            point = form.cleaned_data.get('point')
+            date = form.cleaned_data.get('date')
+            confirm_arrival = form.cleaned_data.get('confirm_arrival')
+            confirm_unloading = form.cleaned_data.get('confirm_unloading')
+            confirm_loading = form.cleaned_data.get('confirm_loading')
+            raport = form.cleaned_data.get('raport')
+            message_to = form.cleaned_data.get('message_to')
+            message = form.cleaned_data.get('message')
+            driver_worker = DriverWorkerModel()
+            driver_worker.point = point
+            driver_worker.date = date
+            driver_worker.confirm_arrival = confirm_arrival
+            driver_worker.confirm_unloading = confirm_unloading
+            driver_worker.confirm_loading = confirm_loading
+            driver_worker.raport = raport
+            driver_worker.message_to = message_to
+            driver_worker.message = message
+            driver_worker.save()
+            message = 'Driver Worker added'
+            url = f'/driver/driver_worker/{driver_worker.id}/'
+            return redirect(url, message)
+        return render(request, 'add.html', locals())
 
 
-class ResetPasswordView(LoginRequiredMixin, View):
-    name = 'Reset Password'
-    template_name = 'add.html'
-    permission_required = 'auth.change_user'
-
-    def get(self, request):
-        return render(request, self.template_name, self.name, self.permission_required, {'form': ResetPasswordForm()})
-
-    def post(self, request, pk):
-        form = ResetPasswordForm(request.POST)
-        if form.is_valid():
-            user = UserModel.objects.get(id=pk)
-            user.set_password(form.cleaned_data.get('new_password'))
-            user.save()
-            return redirect('/login')
-        return render(request, self.template_name, self.name, self.permission_required, {'form': form})
+class DriverWorkerDeleteView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        name = 'Delete Driver Worker'
+        obj = get_object_or_404(DriverWorkerModel, pk=id)
+        obj.delete()
+        message = 'Driver Worker delete'
+        url = f'/driver/all/driver_worker/'
+        return redirect(url, message)

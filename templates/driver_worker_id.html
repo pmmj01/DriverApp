@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+    <ul class="ul_name">
+        <div>
+            <h5>{{ message }}</h5>
+        </div>
+        <div>
+            <a href="/driver/add/driver_worker/" class="btn btn-primary">Add</a>
+            <a href="/driver/edit/driver_worker/{{ driver_worker.pk }}" class="btn btn-primary">Edit</a>
+        </div>
+        <li><b>Point:</b> {{ driver_worker.point }}</li>
+        <li><b>Date:</b> {{ driver_worker.date }}</li>
+        <li><b>Confirm arrival:</b> {{ driver_worker.confirm_arrival }}</li>
+        <li><b>Confirm unloading:</b> {{ driver_worker.confirm_unloading }}</li>
+        <li><b>Confirm loading:</b> {{ driver_worker.confirm_loading }}</li>
+        <li><b>Raport:</b> {{ driver_worker.raport }}</li>
+        <li><b>Message to:</b> {{ driver_worker.message_to }}</li>
+        <li><b>Message:</b> {{ driver_worker.message }}</li>
+    </ul>
+{% endblock %}

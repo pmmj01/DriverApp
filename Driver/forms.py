@@ -3,16 +3,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput
-from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, \
-    TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
+from .models import *
 from .choices import *
 from django.utils.translation import gettext_lazy as _
 
 
-class AddUserForm(UserCreationForm):
+class UserAddForm(UserCreationForm):
     class Meta:
         model = get_user_model()
-        fields = ['phone_number', 'user_type', 'first_name', 'last_name']
+        fields = ['phone_number', 'user_type', 'first_name', 'last_name', 'driving_license']
 
 
 class ResetPasswordForm(forms.Form):
@@ -53,18 +52,6 @@ class AddressCompanyToForm(ModelForm):
             'address_property_second': _('Second line'),
             'address_more_info': _('More information'),
         }
-
-
-class DriverForm(ModelForm):
-    class Meta:
-        model = DriverModel
-        fields = '__all__'
-
-
-class ForwarderForm(ModelForm):
-    class Meta:
-        model = ForwarderModel
-        fields = '__all__'
 
 
 class TrailerForm(ModelForm):

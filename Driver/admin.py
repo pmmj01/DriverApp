@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
-from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, DriverModel, ForwarderModel, TrailerModel, CarModel, CargoModel, PlanCargoModel, DriverWorkerModel, MessageModel
+from .models import *
 
 
 # admin.site.register(AddressCompanyFromModel)
@@ -20,7 +20,7 @@ from .models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, D
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'driving_license', 'user_type')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
@@ -28,11 +28,11 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('phone_number', 'password1', 'password2'),
+            'fields': ('phone_number', 'first_name', 'last_name', 'password1', 'password2', 'driving_license', 'user_type', 'is_staff'),
         }),
     )
-    list_display = ('phone_number', 'first_name', 'last_name', 'user_type', 'is_staff')
-    search_fields = ('phone_number', 'first_name', 'last_name', 'user_type')
+    list_display = ('phone_number', 'first_name', 'last_name', 'user_type', 'driving_license', 'is_staff')
+    search_fields = ('phone_number', 'first_name', 'last_name', 'user_type', 'driving_license')
     ordering = ('phone_number',)
 
 
@@ -48,16 +48,6 @@ class AddressCompanyFromAdmin(admin.ModelAdmin):
 class AddressCompanyToAdmin(admin.ModelAdmin):
     search_fields = ['company_name', 'address_country', 'address_zip_code']
     list_filter = ['company_name', 'address_country']
-
-
-@admin.register(DriverModel)
-class DriverAdmin(admin.ModelAdmin):
-    fields = ['__all__']
-
-
-@admin.register(ForwarderModel)
-class ForwarderAdmin(admin.ModelAdmin):
-    fields = ['__all__']
 
 
 @admin.register(TrailerModel)
@@ -80,8 +70,8 @@ class CargoAdmin(admin.ModelAdmin):
 
 @admin.register(PlanCargoModel)
 class PlanCargoAdmin(admin.ModelAdmin):
-    search_fields = ['driver', 'truck', 'forwarder']
-    list_filter = ['forwarder', 'truck', 'driver']
+    search_fields = ['driver', 'truck']
+    list_filter = ['truck', 'driver']
 
 
 @admin.register(DriverWorkerModel)

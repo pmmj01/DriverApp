@@ -1,18 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-{{ all_plan_cargo }}
-    {% for plan_cargo in all_plan_cargo %}
-        <ul>
-            <tr><b>Driver: </b></tr>
-                <li><p>{{ plan_cargo.driver }}<p></li>
-            <tr><b>Truck: </b></tr>
-                <li><p>{{ plan_cargo.truck }}</p></li>
-            <tr><b>Forwarder: </b></tr>
-                <li><p>{{ plan_cargo.forwarder }}</p></li>
-            <tr><b>Description: </b></tr>
-                <li><p>{{ plan_cargo.description }}</p></li>
-            <tr><b>Date: </b></tr>
-                <li><p>{{ plan_cargo.date }}<p></li>
-        </ul>
-    {% endfor %}
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Driver</th>
+            <th scope="col">Truck</th>
+            <th scope="col">Description</th>
+            <th scope="col"><a href="/driver/add/plan_cargo/" class="btn btn-primary">Add</a></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for plan_cargo in plan_cargo_all %}
+            <tr class="table-activ">
+                <th scope="row">{{ plan_cargo.pk }}</th>
+                <td>{{ plan_cargo.driver }}</td>
+                <td>{{ plan_cargo.truck }}</td>
+                <td>{{ plan_cargo.description }} {{ plan_cargo.date }}</td>
+                <td><a href="/driver/edit/plan_cargo/{{ plan_cargo.pk }}/" class="btn btn-primary">Edit</a></td>
+                <td><a href="/driver/delete/plan_cargo/{{ plan_cargo.pk }}/" class="btn btn-warning">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

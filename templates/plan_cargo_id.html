@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+    <ul class="ul_name">
+        <div>
+            <h5>{{ message }}</h5>
+        </div>
+        <div>
+            <a href="/driver/add/plan_cargo/" class="btn btn-primary">Add</a>
+            <a href="/driver/edit/plan_cargo/{{ plan_cargo.pk }}" class="btn btn-primary">Edit</a>
+        </div>
+        <li><b>Driver:</b> {{ plan_cargo.driver }}</li>
+        <li><b>Truck:</b> {{ plan_cargo.truck }}</li>
+        <li><b>Description:</b> {{ plan_cargo.description }} {{ plan_cargo.date }}</li>
+    </ul>
+{% endblock %}

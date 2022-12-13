@@ -8,16 +8,20 @@
             <th scope="col">Last name</th>
             <th scope="col">Phone number</th>
             <th scope="col">User type</th>
+            <th scope="col"><a href="/driver/add/user/" class="btn btn-primary">Add</a></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
         {% for User in users %}
             <tr class="table-activ">
-                <th scope="row">{{ User.length }}</th>
+                <th scope="row">{{ User.pk }}</th>
                 <td>{{ User.first_name }}</td>
                 <td>{{ User.last_name }}</td>
-                <td>{{ User.username }}</td>
+                <td><a href="/driver/user/{{ User.pk }}/">{{ User.phone_number }}</a></td>
                 <td>{{ User.user_type }}</td>
+                <td><a href="/driver/edit/user/{{ User.pk }}/" class="btn btn-primary">Edit</a></td>
+                <td><a href="/driver/delete/user/{{ User.pk }}/" class="btn btn-warning">Delete</a></td>
             </tr>
         {% endfor %}
         </tbody>

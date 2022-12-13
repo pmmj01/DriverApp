@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
-{% block title %}Trailer{% endblock %}
 {% block content %}
-<ul class="ul_name">
-<div>
-    <h5>{{ message }}</h5>
-</div>
-    <li><b>Trailer Number:</b> {{ trailer.trailer_number }}</li>
-    <li><b>Model:</b> {{ trailer.model }}</li>
-    <li><b>Weighs:</b> {{ trailer.weighs }} kilograms</li>
-    <li><b>Tons can load:</b> {{ trailer.tons_can_load }} kilograms</li>
-    <li><b>Cargo space:</b> {{ trailer.cargo_space }} Euro pallets</li>
-</ul>
+    <ul class="ul_name">
+        <div>
+            <h5>{{ message }}</h5>
+        </div>
+        <div>
+            <a href="/driver/add/trailer/" class="btn btn-primary">Add</a>
+            <a href="/driver/edit/trailer/{{ trailer.pk }}" class="btn btn-primary">Add</a>
+        </div>
+        <li><b>Trailer Number:</b> {{ trailer.trailer_number }}</li>
+        <li><b>Model:</b> {{ trailer.model }}</li>
+        <li><b>Weighs:</b> {{ trailer.weighs }} kilograms</li>
+        <li><b>Tons can load:</b> {{ trailer.tons_can_load }} kilograms</li>
+        <li><b>Cargo space:</b> {{ trailer.cargo_space }} Euro pallets</li>
+    </ul>
 {% endblock %}

@@ -46,17 +46,47 @@ class UserModel(AbstractUser):
     first_name = models.CharField(max_length=64, blank=False)
     last_name = models.CharField(max_length=64, blank=False)
     user_type = models.CharField(max_length=20, choices=USER)
-
+    driving_license = models.CharField(max_length=5, choices=DRIVER_LICENSE, name="driving_license")
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['user_type', 'first_name', 'last_name']
 
     objects = CustomUserManager()
 
     def __str__(self):
-        return f'{self.full_name()} : {self.phone_number} ({self.user_type.title()})'
+        return f'{self.full_name().title()} : {self.phone_number} ({self.user_type.title()})'
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+    @property
+    def is_admin(self):
+        return self.is_superuser, self.user_type == 'admin', self.is_staff
+
+    @property
+    def is_manager(self):
+        return self.user_type == 'manager', self.is_staff
+
+    @property
+    def is_personnel(self):
+        return self.user_type == 'personnel'
+
+    @property
+    def is_dispatcher(self):
+        return self.user_type == 'dispatcher'
+
+    @property
+    def is_forwarder(self):
+        return self.user_type == 'forwarder'
+
+    @property
+    def is_driver(self):
+        return self.user_type == 'drive'
 
 
 class AddressCompanyFromModel(models.Model):
@@ -88,29 +118,6 @@ class AddressCompanyToModel(models.Model):
 
     def __str__(self):
         return f'{self.company_name} - {self.address_city} ({self.address_country})'
-
-
-class DriverModel(models.Model):
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, name='worker')
-    driver_license = models.CharField(max_length=4, choices=DRIVER_LICENSE, blank=False, name='driver_license')
-
-    @property
-    def fullname(self):
-        return f'{self.user.first_name} {self.user.last_name}'
-
-    def __str__(self):
-        return f'{self.user.full_name()} : {self.user.phone_number} ({self.user.user_type.title()}) {self.driver_license}'
-
-
-class ForwarderModel(models.Model):
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, name='worker')
-
-    @property
-    def fullname(self):
-        return f'{self.user.first_name} {self.user.last_name}'
-
-    def __str__(self):
-        return f'{self.user.full_name()} : {self.user.phone_number} ({self.user.user_type.title()})'
 
 
 class TrailerModel(models.Model):
@@ -154,8 +161,7 @@ class CargoModel(models.Model):
     weight = models.PositiveSmallIntegerField(default=0, name='weighs')
     pallets = models.PositiveSmallIntegerField(default=0, name='pallets')
     place_of_pallets = models.PositiveSmallIntegerField(default=0, name='place_of_pallets')
-    truck = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name="cargo_truck")
-    forwarder = models.ForeignKey(ForwarderModel, on_delete=models.CASCADE, related_name="cargo_forwarder")
+    forwarder = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="cargo_forwarder")
     date = models.DateField(auto_now=False, auto_now_add=True, blank=False)
 
     def __str__(self):
@@ -163,14 +169,13 @@ class CargoModel(models.Model):
 
 
 class PlanCargoModel(models.Model):
-    driver = models.ForeignKey(DriverModel, on_delete=models.CASCADE, related_name='plan_cargo_driver')
+    driver = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='plan_cargo_driver')
     truck = models.OneToOneField(CarModel, on_delete=models.CASCADE, related_name='plan_cargo_truck')
-    forwarder = models.ForeignKey(ForwarderModel, on_delete=models.CASCADE, related_name='plan_cargo_forwarder')
     description = models.ForeignKey(CargoModel, on_delete=models.CASCADE, related_name='plan_cargo_description')
     date = models.DateField(auto_now=False, auto_now_add=True, blank=False)
 
     def __str__(self):
-        return f'{self.driver} - {self.truck} ({self.forwarder})'
+        return f'{self.driver} - {self.truck}'
 
 
 class DriverWorkerModel(models.Model):

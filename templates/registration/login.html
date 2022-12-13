@@ -2,15 +2,16 @@
 {% load bootstrap %}
 {% block content %}
     <div class="col-auto center">
-    <div class="card card-center text-center" style="width: 27rem;">
-        <div class="card-body">
-            <h5 class="card-title">Login</h5>
-            <form method="post">
-                {% csrf_token %}
-                {{ form|bootstrap }}
-                <button type="submit">Login</button>
-            </form>
+        <div class="card card-center text-center" style="width: 27rem;">
+            <div class="card-body">
+                <h5 class="card-title">Login</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|bootstrap }}
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <a href="/driver/add/user/" type="submit" class="btn btn-primary">New user</a>
+                </form>
+            </div>
         </div>
-    </div>
     </div>
 {% endblock %}

@@ -25,6 +25,7 @@ NUMBER = (
 )
 
 DRIVER_LICENSE = (
+    ("--", ""),
     ("B", "B"),
     ("B+E", "B+E"),
     ("C", "C"),

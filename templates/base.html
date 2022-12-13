@@ -16,7 +16,7 @@
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
 <div class="card text-center" style="width: auto;">
-    <div class="card-body">
+    <div class="card-body mx-auto">
         {% for message in messages %}
             <h5>{{ message }}</h5>
         {% endfor %}
@@ -27,6 +27,24 @@
             <a href="{% url 'login' %}">Login</a>
         {% endif %}
         <h4><b>{{ name }}</b></h4>
+        {% if user.is_authenticated == admin%}
+            <a href="/driver/add/user" class="btn btn-block">Add user</a>
+            <a href="/driver/all/user" class="btn btn-block">All user</a>
+            <a href="/driver/add/address_company_from" class="btn btn-block">Add company from</a>
+            <a href="/driver/all/address_company_from" class="btn btn-block">All company from</a>
+            <a href="/driver/add/address_company_to" class="btn btn-block">Add company to</a>
+            <a href="/driver/all/address_company_to" class="btn btn-block">All company to</a>
+            <a href="/driver/add/trailer" class="btn btn-block">Add trailer</a>
+            <a href="/driver/all/trailer" class="btn btn-block">All trailer</a>
+            <a href="/driver/add/car" class="btn btn-block">Add car</a>
+            <a href="/driver/all/car" class="btn btn-block">All car</a>
+            <a href="/driver/add/cargo" class="btn btn-block">Add cargo</a>
+            <a href="/driver/all/cargo" class="btn btn-block">All cargo</a>
+            <a href="/driver/add/plan_cargo" class="btn btn-block">Add plan cargo</a>
+            <a href="/driver/all/plan_cargo" class="btn btn-block">All plan cargo</a>
+            <a href="/driver/add/driver_worker" class="btn btn-block">Add driver worker</a>
+            <a href="/driver/all/driver_worker" class="btn btn-block">All driver worker</a>
+        {% endif %}
         {% block title %}
         {% endblock %}
         {% block content %}
@@ -37,6 +55,7 @@
     <strong>
         <i>Today it's {{ now }}</i><br>
         <b>{{ request.user }}</b>
+
     </strong>
 </footer>
 </body>

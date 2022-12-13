@@ -1,0 +1,12 @@
+.menu_edit{
+    transition: .3s;
+}
+.menu_edit:hover > :not(:hover){
+    opacity: .4;
+}
+h5{
+    color: black;
+}
+.card-body-inside{
+    background: aliceblue;
+}
