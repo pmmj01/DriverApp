@@ -1,8 +1,5 @@
 from django.urls import path
 from Driver.views import *
-from django.contrib.auth import views as auth_views
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
     path('add/user/', UserAddView.as_view(), name='add_user'),
@@ -17,7 +14,7 @@ urlpatterns = [
     path('delete/address_company_from/<int:id>/', AddressCompanyFromDeleteView.as_view(), name='delete_address_company_from'),
     path('add/address_company_to/', AddressCompanyToAddView.as_view(), name='add_address_company_to'),
     path('all/address_company_to/', AddressCompanyToAllView.as_view(), name='all_address_company_to'),
-    path('address_company_to/<int:id>/', AddressCompanyToView.as_view(), name='address_company'),
+    path('address_company_to/<int:id>/', AddressCompanyToView.as_view(), name='address_company_to'),
     path('edit/address_company_to/<int:id>/', AddressCompanyToEditView.as_view(), name='edit_address_company_to'),
     path('delete/address_company_to/<int:id>/', AddressCompanyToDeleteView.as_view(), name='delete_address_company_to'),
     path('add/trailer/', TrailerAddView.as_view(), name='add_trailer'),

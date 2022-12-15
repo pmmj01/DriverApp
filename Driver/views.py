@@ -294,7 +294,6 @@ class AddressCompanyToAddView(LoginRequiredMixin, View):
             company.address_property_first = address_property_first
             company.address_property_second = address_property_second
             company.address_more_info = address_more_info
-            company.save()
             if AddressCompanyToModel.objects.filter(company_name=company_name.upper(),
                                                     address_country=address_country,
                                                     address_city=address_city.upper(),

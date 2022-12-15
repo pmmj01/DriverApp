@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Driver.apps.DriverConfig',
     'bootstrapform',
+    'rest_framework',
+    'DriverApp',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Driver.my_context_processor.my_cp'
             ],
         },
     },
