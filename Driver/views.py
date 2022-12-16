@@ -12,10 +12,17 @@ from django.views import View
 #TODO plan
 #TODO worker side
 #TODO info and contact to me
-#TODO tests
+
 
 
 class UserAddView(LoginRequiredMixin, View):
+    """
+    User Add View
+    Form: UserAddForm
+    :return url all_user (driver/all/user)
+            Only admin can make new account and added worker
+            You must be logged in
+    """
     template_name = 'add.html'
     name = 'User Add'
 
@@ -42,6 +49,11 @@ class UserAddView(LoginRequiredMixin, View):
 
 
 class ResetPasswordView(LoginRequiredMixin, View):
+    """
+    Reset Password View
+    User can reset password
+    You must be logged in
+    """
     name = 'Reset Password'
     template_name = 'add.html'
     permission_required = 'auth.change_user'
@@ -64,9 +76,9 @@ class UserAllView(LoginRequiredMixin, View):
     The function displays all users except "Super User"
 
     The user should be logged in to be able to see users in the database,
-    To see all users, you must have "Manager" permissions
 
     :return list of users.
+    You must be logged in
     """
     def get(self, request):
         users = UserModel.objects.exclude(is_superuser=True)
@@ -74,6 +86,10 @@ class UserAllView(LoginRequiredMixin, View):
 
 
 class UserEditView(LoginRequiredMixin, View):
+    """
+    This function allows you to edit user data, can be done by admin
+    work is in progress
+    """
     def get(self, request, id):
         name = 'Edit User'
         obj = get_object_or_404(UserModel, pk=id)
@@ -92,6 +108,10 @@ class UserEditView(LoginRequiredMixin, View):
 
 
 class UserView(LoginRequiredMixin, View):
+    """
+    A module that allows you to see the user and his data
+    You must be logged in
+    """
     def get(self, request, id):
         name = 'User'
         user = get_object_or_404(UserModel, pk=id)
@@ -105,6 +125,11 @@ class UserView(LoginRequiredMixin, View):
 
 
 class UserDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to delete a user
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete User'
         user = get_object_or_404(UserModel, pk=id)
@@ -130,6 +155,8 @@ class AddressCompanyFromAddView(LoginRequiredMixin, View):
 
     :return Adderss in a view for one full record.
 
+    You must be logged in
+    Work in progress
     """
     def get(self, request):
         name = 'Add Address Company From'
@@ -176,7 +203,11 @@ class AddressCompanyFromAddView(LoginRequiredMixin, View):
             return render(request, "add.html", locals())
 
 
-class AddressCompanyFromAllView(View):
+class AddressCompanyFromAllView(LoginRequiredMixin, View):
+    """
+    A module that allows you to browse the database of all companies in the database
+    You must be logged in
+    """
     def get(self, request):
         name = 'All Address Company From'
         company = AddressCompanyFromModel.objects.all()
@@ -184,6 +215,9 @@ class AddressCompanyFromAllView(View):
 
 
 class AddressCompanyFromView(View):
+    """
+    A module that allows you to view one selected company
+    """
     def get(self, request, id):
         cod = 'from'
         name = 'Address Company From'
@@ -197,7 +231,12 @@ class AddressCompanyFromView(View):
         return render(request, 'address_id.html', ctx)
 
 
-class AddressCompanyFromEditView(View):
+class AddressCompanyFromEditView(LoginRequiredMixin, View):
+    """
+    A module that allows you to edit a specific company
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Edit Address Company From'
         obj = get_object_or_404(AddressCompanyFromModel, pk=id)
@@ -242,6 +281,11 @@ class AddressCompanyFromEditView(View):
 
 
 class AddressCompanyFromDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to remove company data from the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete Address Company From'
         company = get_object_or_404(AddressCompanyFromModel, pk=id)
@@ -265,8 +309,10 @@ class AddressCompanyToAddView(LoginRequiredMixin, View):
         Name, state, city, postal code, street, property number.
         Returns the message "Objects already exist".
 
-    :return Adderss in a view for one full record.
+    :return Address in a view for one full record.
 
+    You must be logged in
+    Work in progress
     """
     def get(self, request):
         name = 'Add Address Company To'
@@ -313,7 +359,12 @@ class AddressCompanyToAddView(LoginRequiredMixin, View):
             return render(request, "add.html", locals())
 
 
-class AddressCompanyToAllView(View):
+class AddressCompanyToAllView(LoginRequiredMixin, View):
+    """
+    A module that allows you to browse the database of all companies in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'All Address Company To'
         company = AddressCompanyToModel.objects.all()
@@ -321,6 +372,9 @@ class AddressCompanyToAllView(View):
 
 
 class AddressCompanyToView(View):
+    """
+    A module that allows you to view one selected company
+    """
     def get(self, request, id):
         cod = 'to'
         name = 'Address Company To'
@@ -334,7 +388,12 @@ class AddressCompanyToView(View):
         return render(request, 'address_id.html', ctx)
 
 
-class AddressCompanyToEditView(View):
+class AddressCompanyToEditView(LoginRequiredMixin, View):
+    """
+    A module that allows you to edit a specific company
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Edit Address Company To'
         obj = get_object_or_404(AddressCompanyToModel, pk=id)
@@ -379,6 +438,11 @@ class AddressCompanyToEditView(View):
 
 
 class AddressCompanyToDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to remove company data from the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete Address Company To'
         company = get_object_or_404(AddressCompanyToModel, pk=id)
@@ -389,6 +453,11 @@ class AddressCompanyToDeleteView(LoginRequiredMixin, View):
 
 
 class TrailerAddView(LoginRequiredMixin, View):
+    """
+    A module that allows you to add an object to the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Add Trailer'
         form = TrailerForm()
@@ -424,6 +493,11 @@ class TrailerAddView(LoginRequiredMixin, View):
 
 
 class TrailerAllView(View):
+    """
+    A module that allows you to see all objects existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'All Trailer'
         trailer = TrailerModel.objects.all()
@@ -431,6 +505,11 @@ class TrailerAllView(View):
 
 
 class TrailerView(View):
+    """
+    A module that allows you to see a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Trailer'
         trailer = get_object_or_404(TrailerModel, pk=id)
@@ -443,6 +522,11 @@ class TrailerView(View):
 
 
 class TrailerEditView(View):
+    """
+    A module that allows you to edit a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Edit Trailer'
         obj = get_object_or_404(TrailerModel, pk=id)
@@ -477,6 +561,11 @@ class TrailerEditView(View):
 
 
 class TrailerDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to delete an object from the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete Trailer'
         obj = get_object_or_404(TrailerModel, pk=id)
@@ -487,6 +576,11 @@ class TrailerDeleteView(LoginRequiredMixin, View):
 
 
 class CarAddView(LoginRequiredMixin, View):
+    """
+    A module that allows you to add an object to the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Car Add'
         form = CarForm()
@@ -526,6 +620,11 @@ class CarAddView(LoginRequiredMixin, View):
 
 
 class CarAllView(View):
+    """
+    A module that allows you to see all objects existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Car'
         car = CarModel.objects.all()
@@ -533,6 +632,11 @@ class CarAllView(View):
 
 
 class CarView(View):
+    """
+    A module that allows you to see a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Car'
         car = get_object_or_404(CarModel, pk=id)
@@ -545,6 +649,11 @@ class CarView(View):
 
 
 class CarEditView(View):
+    """
+    A module that allows you to edit a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Edit Car'
         obj = get_object_or_404(CarModel, pk=id)
@@ -583,6 +692,11 @@ class CarEditView(View):
 
 
 class CarDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to delete an object from the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete Car'
         obj = get_object_or_404(CarModel, pk=id)
@@ -593,6 +707,11 @@ class CarDeleteView(LoginRequiredMixin, View):
 
 
 class CargoAddView(LoginRequiredMixin, View):
+    """
+    A module that allows you to add an object to the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Cargo Add'
         form = CargoForm()
@@ -640,14 +759,24 @@ class CargoAddView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
-class CargoAllView(View):
+class CargoAllView(LoginRequiredMixin, View):
+    """
+    A module that allows you to see all objects existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Cargo'
         all_cargo = CargoModel.objects.all()
         return render(request, 'all_cargo.html', locals())
 
 
-class CargoView(View):
+class CargoView(LoginRequiredMixin, View):
+    """
+    A module that allows you to see a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Cargo'
         cargo = get_object_or_404(CargoModel, pk=id)
@@ -659,7 +788,12 @@ class CargoView(View):
         return render(request, 'cargo_id.html', ctx)
 
 
-class CargoEditView(View):
+class CargoEditView(LoginRequiredMixin, View):
+    """
+    A module that allows you to edit a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Edit Cargo'
         obj = get_object_or_404(CargoModel, pk=id)
@@ -678,6 +812,11 @@ class CargoEditView(View):
 
 
 class CargoDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to delete an object from the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete Cargo'
         obj = get_object_or_404(CargoModel, pk=id)
@@ -689,6 +828,11 @@ class CargoDeleteView(LoginRequiredMixin, View):
 
 
 class PlanCargoAddView(LoginRequiredMixin, View):
+    """
+    A module that allows you to add an object to the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Plan Cargo Add'
         form = PlanCargoForm()
@@ -716,14 +860,24 @@ class PlanCargoAddView(LoginRequiredMixin, View):
         return render(request, 'add.html', locals())
 
 
-class PlanCargoAllView(View):
+class PlanCargoAllView(LoginRequiredMixin, View):
+    """
+    A module that allows you to see all objects existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Plan Cargo'
         plan_cargo_all = PlanCargoModel.objects.all()
         return render(request, 'all_plan_cargo.html', locals())
 
 
-class PlanCargoView(View):
+class PlanCargoView(LoginRequiredMixin, View):
+    """
+    A module that allows you to see a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Trailer'
         trailer = get_object_or_404(TrailerModel, pk=id)
@@ -735,7 +889,12 @@ class PlanCargoView(View):
         return render(request, 'trailer_id.html', ctx)
 
 
-class PlanCargoEditView(View):
+class PlanCargoEditView(LoginRequiredMixin, View):
+    """
+    A module that allows you to edit a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Edit Plan Cargo'
         obj = get_object_or_404(PlanCargoModel, pk=id)
@@ -766,6 +925,11 @@ class PlanCargoEditView(View):
 
 
 class PlanCargoDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to delete an object from the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete Plan Cargo'
         obj = get_object_or_404(PlanCargoModel, pk=id)
@@ -776,6 +940,11 @@ class PlanCargoDeleteView(LoginRequiredMixin, View):
 
 
 class DriverWorkerAddView(LoginRequiredMixin, View):
+    """
+    A module that allows you to add an object to the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Driver Worker Add'
         form = DriverWorkerForm()
@@ -810,6 +979,11 @@ class DriverWorkerAddView(LoginRequiredMixin, View):
 
 
 class DriverWorkerAllView(LoginRequiredMixin, View):
+    """
+    A module that allows you to see all objects existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request):
         name = 'Driver Worker'
         all_driver_worker = DriverWorkerModel.objects.all()
@@ -817,6 +991,11 @@ class DriverWorkerAllView(LoginRequiredMixin, View):
 
 
 class DriverWorkerView(View):
+    """
+    A module that allows you to see a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Driver Worker'
         driver_worker = get_object_or_404(DriverWorkerModel, pk=id)
@@ -829,6 +1008,11 @@ class DriverWorkerView(View):
 
 
 class DriverWorkerEditView(View):
+    """
+    A module that allows you to edit a specific object existing in the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Edit Driver Worker'
         obj = get_object_or_404(DriverWorkerModel, pk=id)
@@ -865,6 +1049,11 @@ class DriverWorkerEditView(View):
 
 
 class DriverWorkerDeleteView(LoginRequiredMixin, View):
+    """
+    A module that allows you to delete an object from the database
+    You must be logged in
+    Work in progress
+    """
     def get(self, request, id):
         name = 'Delete Driver Worker'
         obj = get_object_or_404(DriverWorkerModel, pk=id)

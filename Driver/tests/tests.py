@@ -5,7 +5,7 @@ from .testutils import *
 from django.urls import reverse, resolve
 from Driver.models import UserModel, AddressCompanyFromModel, AddressCompanyToModel, TrailerModel, CarModel
 from Driver.views import *
-
+from Driver.forms import *
 
 
 class Driver_tests(TestCase):
@@ -54,7 +54,7 @@ class Driver_tests(TestCase):
         Take the url name and compare with the function in Views
         """
         user = create_fake_user()
-        url = reverse('delete_user', kwargs={'id':user.id})
+        url = reverse('delete_user', kwargs={'id': user.id})
         assert resolve(url).func, UserDeleteView
 
     @pytest.mark.django_db
@@ -65,7 +65,7 @@ class Driver_tests(TestCase):
         Take the url name and compare with the function in Views
         """
         user = create_fake_user()
-        url = reverse('delete_user', kwargs={'id':user.id})
+        url = reverse('delete_user', kwargs={'id': user.id})
         assert resolve(url).func, UserEditView is False
 
     @pytest.mark.django_db
@@ -91,9 +91,9 @@ class Driver_tests(TestCase):
         """
         client = Client()
         user = create_fake_user()
-        response = client.get(reverse('edit_user', kwargs={'id':user.id}))
+        response = client.get(reverse('edit_user', kwargs={'id': user.id}))
         # self.assertEqual(response.status_code, 302) # True
-        assert response.status_code, 302 # True
+        assert response.status_code, 302  # True
         assert response, 'edit.html'
 
     @pytest.mark.django_db
@@ -214,7 +214,6 @@ class Driver_tests(TestCase):
         self.assertEqual(response.status_code, 200)
         assert response, 'all_car.html'
 
-
     @pytest.mark.django_db
     def test_view_one_user(self):
         """
@@ -225,9 +224,9 @@ class Driver_tests(TestCase):
         """
         client = Client()
         user = create_fake_user()
-        response = client.get(reverse('u_user', kwargs={'id':user.id}))
+        response = client.get(reverse('u_user', kwargs={'id': user.id}))
         # self.assertEqual(response.status_code, 200) # status code 200
-        assert response.status_code, 302 # status code 302
+        assert response.status_code, 302  # status code 302
         assert response, 'user_id.html'
 
     @pytest.mark.django_db
@@ -241,9 +240,9 @@ class Driver_tests(TestCase):
         """
         client = Client()
         address = create_fake_address_company_from()
-        response = client.get(reverse('address_company_from', kwargs={'id':address.id}))
+        response = client.get(reverse('address_company_from', kwargs={'id': address.id}))
         # self.assertEqual(response.status_code, 200) # status code 200
-        assert response.status_code, 302 # status code 302
+        assert response.status_code, 302  # status code 302
         assert response, 'address_id.html'
 
     @pytest.mark.django_db
@@ -257,7 +256,7 @@ class Driver_tests(TestCase):
         """
         client = Client()
         address = create_fake_address_company_to()
-        response = client.get(reverse('address_company_to', kwargs={'id':address.id}))
+        response = client.get(reverse('address_company_to', kwargs={'id': address.id}))
         # self.assertEqual(response.status_code, 200) # status code 200
         assert response.status_code, 302  # status code 302
         assert response, 'address_id.html'
@@ -272,7 +271,7 @@ class Driver_tests(TestCase):
         """
         client = Client()
         trailer = create_fake_trailer()
-        response = client.get(reverse('trailer', kwargs={'id':trailer.id}))
+        response = client.get(reverse('trailer', kwargs={'id': trailer.id}))
         # self.assertEqual(response.status_code, 200) # status code 200
         assert response.status_code, 302  # status code 302
         assert response, 'trailer_id.html'
@@ -291,7 +290,6 @@ class Driver_tests(TestCase):
         # self.assertEqual(response.status_code, 200) # status code 200
         assert response.status_code, 302  # status code 302
         assert response, 'car_id.html'
-
 
     @pytest.mark.django_db
     def test_address_from_none(self):
@@ -343,7 +341,6 @@ class Driver_tests(TestCase):
         address_to = AddressCompanyToModel.objects.all().exists() is True
         assert address_to, response
 
-
     @pytest.mark.django_db
     def test_user_none(self):
         """
@@ -385,7 +382,3 @@ def test_login_user(client, set_up):
     url = reverse('login')
     response = client.get(url)
     assert response.status_code == 200
-
-
-
-
